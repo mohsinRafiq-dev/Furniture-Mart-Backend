@@ -1,96 +1,148 @@
 import { Router, Request, Response } from "express";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { adminAuthMiddleware, adminOnly } from "../middleware/auth.js";
-import { ApiResponse, Product, CreateProductRequest } from "../types/index.js";
+import Product from "../models/Product.js";
+import { query } from "express-validator";
 
 const router = Router();
 
-// In-memory database (replace with MongoDB later)
-interface ProductStore {
-  [key: string]: Product;
-}
-
-const products: ProductStore = {
-  "prod-1": {
-    id: "prod-1",
-    name: "Modern Leather Sofa",
-    description: "Premium black leather sofa with modern design",
-    price: 1299,
-    category: "Sofas",
-    image: "🛋️",
-    stock: 12,
-    sku: "SOFA-001",
-    featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  "prod-2": {
-    id: "prod-2",
-    name: "Wooden Dining Chair",
-    description: "Classic wooden dining chair with cushion",
-    price: 249,
-    category: "Chairs",
-    image: "🪑",
-    stock: 45,
-    sku: "CHAIR-001",
-    featured: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  "prod-3": {
-    id: "prod-3",
-    name: "Platform Bed Frame",
-    description: "Modern platform bed frame with storage",
-    price: 699,
-    category: "Beds",
-    image: "🛏️",
-    stock: 8,
-    sku: "BED-001",
-    featured: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-};
-
 /**
- * GET /api/products
- * Get all products with optional filtering
+ * GET /api/products/search/advanced
+ * Advanced product search with filtering, pagination, and sorting
  */
 router.get(
-  "/",
+  "/search/advanced",
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const { category, featured, search } = req.query;
+    const {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      featured,
+      sort,
+      page = "1",
+      limit = "12",
+      rating,
+      inStock,
+    } = req.query;
 
-    let productList = Object.values(products);
+    // Build filter object
+    const filter: any = {};
+
+    // Search by name or description
+    if (search && typeof search === "string") {
+      filter.$text = { $search: search };
+    }
 
     // Filter by category
     if (category && typeof category === "string") {
-      productList = productList.filter((p) =>
-        p.category.toLowerCase().includes(category.toLowerCase())
-      );
+      filter.category = new RegExp(category, "i");
     }
 
-    // Filter by featured
+    // Price range filtering
+    const priceFilter: any = {};
+    if (minPrice) {
+      const min = parseFloat(minPrice as string);
+      if (!isNaN(min)) priceFilter.$gte = min;
+    }
+    if (maxPrice) {
+      const max = parseFloat(maxPrice as string);
+      if (!isNaN(max)) priceFilter.$lte = max;
+    }
+    if (Object.keys(priceFilter).length > 0) {
+      filter.price = priceFilter;
+    }
+
+    // Featured filter
     if (featured === "true") {
-      productList = productList.filter((p) => p.featured);
+      filter.featured = true;
     }
 
-    // Search by name or SKU
-    if (search && typeof search === "string") {
-      productList = productList.filter(
-        (p) =>
-          p.name.toLowerCase().includes(search.toLowerCase()) ||
-          p.sku.toLowerCase().includes(search.toLowerCase())
-      );
+    // Rating filter
+    if (rating) {
+      const ratingValue = parseFloat(rating as string);
+      if (!isNaN(ratingValue)) {
+        filter.rating = { $gte: ratingValue };
+      }
     }
 
-    const response: ApiResponse<Product[]> = {
+    // In stock filter
+    if (inStock === "true") {
+      filter.stock = { $gt: 0 };
+    }
+
+    // Pagination
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(limit as string) || 12));
+    const skip = (pageNum - 1) * pageSize;
+
+    // Sorting
+    let sortObj: any = { createdAt: -1 }; // Default: newest first
+    if (sort) {
+      const sortStr = sort as string;
+      if (sortStr === "price-asc") sortObj = { price: 1 };
+      else if (sortStr === "price-desc") sortObj = { price: -1 };
+      else if (sortStr === "rating") sortObj = { rating: -1, reviews: -1 };
+      else if (sortStr === "newest") sortObj = { createdAt: -1 };
+      else if (sortStr === "oldest") sortObj = { createdAt: 1 };
+      else if (sortStr === "popular") sortObj = { reviews: -1, rating: -1 };
+      else if (sortStr === "featured") sortObj = { featured: -1, createdAt: -1 };
+    }
+
+    // Execute query
+    const products = await Product.find(filter)
+      .sort(sortObj)
+      .skip(skip)
+      .limit(pageSize)
+      .select("-__v");
+
+    const totalCount = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    res.status(200).json({
       success: true,
-      message: `Retrieved ${productList.length} products`,
-      data: productList,
-    };
+      message: `Retrieved ${products.length} products`,
+      data: {
+        products,
+        pagination: {
+          currentPage: pageNum,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    });
+  })
+);
 
-    res.status(200).json(response);
+/**
+ * GET /api/products/slug/:slug
+ * Get product by slug
+ */
+router.get(
+  "/slug/:slug",
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { slug } = req.params;
+
+    const product = await Product.findOne({
+      slug: slug.toLowerCase(),
+    }).select("-__v");
+
+    if (!product) {
+      res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Product retrieved successfully",
+      data: product,
+    });
   })
 );
 
@@ -102,7 +154,8 @@ router.get(
   "/:id",
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const product = products[id];
+
+    const product = await Product.findById(id).select("-__v");
 
     if (!product) {
       res.status(404).json({
@@ -112,13 +165,61 @@ router.get(
       return;
     }
 
-    const response: ApiResponse<Product> = {
+    res.status(200).json({
       success: true,
       message: "Product retrieved successfully",
       data: product,
-    };
+    });
+  })
+);
 
-    res.status(200).json(response);
+/**
+ * GET /api/products
+ * List all products with basic filtering
+ */
+router.get(
+  "/",
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { category, featured, page = "1", limit = "12" } = req.query;
+
+    const filter: any = {};
+
+    if (category && typeof category === "string") {
+      filter.category = new RegExp(category, "i");
+    }
+
+    if (featured === "true") {
+      filter.featured = true;
+    }
+
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(limit as string) || 12));
+    const skip = (pageNum - 1) * pageSize;
+
+    const products = await Product.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(pageSize)
+      .select("-__v");
+
+    const totalCount = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    res.status(200).json({
+      success: true,
+      message: `Retrieved ${products.length} products`,
+      data: {
+        products,
+        pagination: {
+          currentPage: pageNum,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    });
   })
 );
 
@@ -131,8 +232,20 @@ router.post(
   adminAuthMiddleware,
   adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const { name, description, price, category, image, stock, sku, featured } =
-      req.body as CreateProductRequest;
+    const {
+      name,
+      description,
+      price,
+      category,
+      images,
+      stock,
+      sku,
+      featured,
+      variants,
+      specifications,
+      rating,
+      reviews,
+    } = req.body;
 
     // Validation
     if (!name || !price || !category || !sku) {
@@ -151,17 +264,9 @@ router.post(
       return;
     }
 
-    if (typeof stock !== "number" || stock < 0) {
-      res.status(400).json({
-        success: false,
-        message: "Stock must be a non-negative number",
-      });
-      return;
-    }
-
     // Check for duplicate SKU
-    const skuExists = Object.values(products).some((p) => p.sku === sku);
-    if (skuExists) {
+    const existingSku = await Product.findOne({ sku });
+    if (existingSku) {
       res.status(400).json({
         success: false,
         message: "SKU already exists",
@@ -169,29 +274,29 @@ router.post(
       return;
     }
 
-    const newProduct: Product = {
-      id: `prod-${Date.now()}`,
+    // Create product
+    const newProduct = new Product({
       name,
       description: description || "",
       price,
       category,
-      image: image || "📦",
+      images: images || [],
       stock: stock || 0,
       sku,
       featured: featured || false,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      variants: variants || [],
+      specifications: specifications || [],
+      rating: rating || 0,
+      reviews: reviews || 0,
+    });
 
-    products[newProduct.id] = newProduct;
+    await newProduct.save();
 
-    const response: ApiResponse<Product> = {
+    res.status(201).json({
       success: true,
       message: "Product created successfully",
       data: newProduct,
-    };
-
-    res.status(201).json(response);
+    });
   })
 );
 
@@ -205,7 +310,22 @@ router.put(
   adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const product = products[id];
+    const {
+      name,
+      description,
+      price,
+      category,
+      images,
+      stock,
+      sku,
+      featured,
+      variants,
+      specifications,
+      rating,
+      reviews,
+    } = req.body;
+
+    const product = await Product.findById(id);
 
     if (!product) {
       res.status(404).json({
@@ -214,9 +334,6 @@ router.put(
       });
       return;
     }
-
-    const { name, description, price, category, image, stock, sku, featured } =
-      req.body;
 
     // Validate price if provided
     if (price !== undefined) {
@@ -242,7 +359,7 @@ router.put(
 
     // Check for duplicate SKU (if SKU is being changed)
     if (sku && sku !== product.sku) {
-      const skuExists = Object.values(products).some((p) => p.sku === sku);
+      const skuExists = await Product.findOne({ sku });
       if (skuExists) {
         res.status(400).json({
           success: false,
@@ -253,28 +370,31 @@ router.put(
     }
 
     // Update fields
-    const updatedProduct: Product = {
-      ...product,
-      ...(name && { name }),
-      ...(description !== undefined && { description }),
-      ...(price && { price }),
-      ...(category && { category }),
-      ...(image && { image }),
-      ...(stock !== undefined && { stock }),
-      ...(sku && { sku }),
-      ...(featured !== undefined && { featured }),
-      updatedAt: new Date(),
-    };
+    if (name) product.name = name;
+    if (description !== undefined) product.description = description;
+    if (price) product.price = price;
+    if (category) product.category = category;
+    if (images) product.images = images;
+    if (stock !== undefined) product.stock = stock;
+    if (sku) product.sku = sku;
+    if (featured !== undefined) product.featured = featured;
+    if (variants) product.variants = variants;
+    if (specifications) product.specifications = specifications;
+    if (rating !== undefined) product.rating = rating;
+    if (reviews !== undefined) product.reviews = reviews;
 
-    products[id] = updatedProduct;
+    // Reset slug to regenerate it
+    if (name) {
+      product.slug = undefined as any;
+    }
 
-    const response: ApiResponse<Product> = {
+    await product.save();
+
+    res.status(200).json({
       success: true,
       message: "Product updated successfully",
-      data: updatedProduct,
-    };
-
-    res.status(200).json(response);
+      data: product,
+    });
   })
 );
 
@@ -289,7 +409,9 @@ router.delete(
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
-    if (!products[id]) {
+    const product = await Product.findByIdAndDelete(id);
+
+    if (!product) {
       res.status(404).json({
         success: false,
         message: "Product not found",
@@ -297,14 +419,11 @@ router.delete(
       return;
     }
 
-    delete products[id];
-
-    const response: ApiResponse = {
+    res.status(200).json({
       success: true,
       message: "Product deleted successfully",
-    };
-
-    res.status(200).json(response);
+      data: { id: product._id },
+    });
   })
 );
 
@@ -315,24 +434,28 @@ router.delete(
 router.get(
   "/stats/overview",
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const productList = Object.values(products);
+    const totalProducts = await Product.countDocuments();
+    const featuredCount = await Product.countDocuments({ featured: true });
+    const avgPrice = await Product.aggregate([
+      {
+        $group: {
+          _id: null,
+          average: { $avg: "$price" },
+        },
+      },
+    ]);
 
     const stats = {
-      total: productList.length,
-      featured: productList.filter((p) => p.featured).length,
-      lowStock: productList.filter((p) => p.stock > 0 && p.stock <= 10).length,
-      outOfStock: productList.filter((p) => p.stock === 0).length,
-      totalValue: productList.reduce((sum, p) => sum + p.price * p.stock, 0),
-      categories: Array.from(new Set(productList.map((p) => p.category))).length,
+      totalProducts,
+      featuredProducts: featuredCount,
+      averagePrice: avgPrice[0]?.average || 0,
     };
 
-    const response: ApiResponse = {
+    res.status(200).json({
       success: true,
       message: "Product statistics retrieved",
       data: stats,
-    };
-
-    res.status(200).json(response);
+    });
   })
 );
 

@@ -39,6 +39,7 @@ export interface IProduct extends Document {
   images: IProductImage[];
   stock: number;
   sku: string;
+  slug: string;
   featured: boolean;
   variants: IProductVariant[];
   specifications: IProductSpec[];
@@ -122,6 +123,13 @@ const productSchema = new Schema<IProduct>(
       minlength: [3, "SKU must be at least 3 characters"],
       index: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      index: true,
+    },
     featured: {
       type: Boolean,
       default: false,
@@ -185,6 +193,23 @@ const productSchema = new Schema<IProduct>(
 // Index for common queries
 productSchema.index({ category: 1, featured: 1 });
 productSchema.index({ name: "text", description: "text" });
+productSchema.index({ slug: 1 });
+productSchema.index({ price: 1 });
+
+/**
+ * Auto-generate slug from name before saving
+ */
+productSchema.pre("save", function (next) {
+  if (!this.slug && this.name) {
+    this.slug = this.name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+  next();
+});
 
 /**
  * Product Model
