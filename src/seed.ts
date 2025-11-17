@@ -455,7 +455,7 @@ const SEED_PRODUCTS = [
 async function seedDatabase() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(config.MONGODB_URI);
+    await mongoose.connect(config.DB_URI);
     console.log("Connected to MongoDB");
 
     // Check if products already exist
