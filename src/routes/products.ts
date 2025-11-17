@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { adminAuthMiddleware, adminOnly } from "../middleware/auth.js";
 import { ApiResponse, Product, CreateProductRequest } from "../types/index.js";
 
 const router = Router();
@@ -127,6 +128,8 @@ router.get(
  */
 router.post(
   "/",
+  adminAuthMiddleware,
+  adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { name, description, price, category, image, stock, sku, featured } =
       req.body as CreateProductRequest;
@@ -198,6 +201,8 @@ router.post(
  */
 router.put(
   "/:id",
+  adminAuthMiddleware,
+  adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const product = products[id];
@@ -279,6 +284,8 @@ router.put(
  */
 router.delete(
   "/:id",
+  adminAuthMiddleware,
+  adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 

@@ -4,6 +4,7 @@ import { config } from "../config/index.js";
 import { ApiResponse } from "../types/index.js";
 import productRoutes from "./products.js";
 import categoryRoutes from "./categories.js";
+import authRoutes from "./auth.js";
 
 const router = Router();
 
@@ -79,5 +80,6 @@ router.get(
  */
 router.use("/products", productRoutes);
 router.use("/categories", categoryRoutes);
+router.use("/auth", authRoutes);
 
 export default router;

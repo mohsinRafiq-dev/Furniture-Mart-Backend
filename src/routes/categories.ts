@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { asyncHandler } from "../middleware/errorHandler.js";
+import { adminAuthMiddleware, adminOnly } from "../middleware/auth.js";
 import { ApiResponse, Category, CreateCategoryRequest } from "../types/index.js";
 
 const router = Router();
@@ -127,6 +128,8 @@ router.get(
  */
 router.post(
   "/",
+  adminAuthMiddleware,
+  adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { name, description, icon, color } =
       req.body as CreateCategoryRequest;
@@ -197,6 +200,8 @@ router.post(
  */
 router.put(
   "/:id",
+  adminAuthMiddleware,
+  adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const category = categories[id];
@@ -271,6 +276,8 @@ router.put(
  */
 router.delete(
   "/:id",
+  adminAuthMiddleware,
+  adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
