@@ -1,6 +1,7 @@
 # Ashraf Furnitures - API Documentation
 
 ## Base URL
+
 ```
 http://localhost:5000/api
 ```
@@ -8,12 +9,15 @@ http://localhost:5000/api
 ## Health & Info Endpoints
 
 ### Health Check
+
 ```
 GET /health
 ```
+
 Returns basic server health status.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -29,9 +33,11 @@ Returns basic server health status.
 ```
 
 ### API Info
+
 ```
 GET /info
 ```
+
 Returns complete API documentation and available endpoints.
 
 ---
@@ -39,21 +45,25 @@ Returns complete API documentation and available endpoints.
 ## Products API
 
 ### List All Products
+
 ```
 GET /products
 ```
 
 **Query Parameters:**
+
 - `category` (string) - Filter by category name
 - `featured` (boolean) - Filter by featured status
 - `search` (string) - Search by product name or SKU
 
 **Example:**
+
 ```
 GET /products?category=Sofas&featured=true&search=leather
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -77,11 +87,13 @@ GET /products?category=Sofas&featured=true&search=leather
 ```
 
 ### Get Single Product
+
 ```
 GET /products/:id
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -95,17 +107,20 @@ GET /products/:id
 ```
 
 ### Create Product
+
 ```
 POST /products
 ```
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Authorization: Bearer <token>
 ```
 
 **Request Body:**
+
 ```json
 {
   "name": "Modern Leather Sofa",
@@ -120,6 +135,7 @@ Authorization: Bearer <token>
 ```
 
 **Response (201):**
+
 ```json
 {
   "success": true,
@@ -129,11 +145,13 @@ Authorization: Bearer <token>
 ```
 
 ### Update Product
+
 ```
 PUT /products/:id
 ```
 
 **Request Body:** (all fields optional)
+
 ```json
 {
   "name": "Updated Name",
@@ -143,6 +161,7 @@ PUT /products/:id
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -152,11 +171,13 @@ PUT /products/:id
 ```
 
 ### Delete Product
+
 ```
 DELETE /products/:id
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -165,11 +186,13 @@ DELETE /products/:id
 ```
 
 ### Product Statistics
+
 ```
 GET /products/stats/overview
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -190,11 +213,13 @@ GET /products/stats/overview
 ## Categories API
 
 ### List All Categories
+
 ```
 GET /categories
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -215,11 +240,13 @@ GET /categories
 ```
 
 ### Get Single Category
+
 ```
 GET /categories/:id
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -229,11 +256,13 @@ GET /categories/:id
 ```
 
 ### Create Category
+
 ```
 POST /categories
 ```
 
 **Request Body:**
+
 ```json
 {
   "name": "Office Furniture",
@@ -244,6 +273,7 @@ POST /categories
 ```
 
 **Response (201):**
+
 ```json
 {
   "success": true,
@@ -253,11 +283,13 @@ POST /categories
 ```
 
 ### Update Category
+
 ```
 PUT /categories/:id
 ```
 
 **Request Body:** (all fields optional)
+
 ```json
 {
   "name": "Updated Name",
@@ -267,6 +299,7 @@ PUT /categories/:id
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -276,11 +309,13 @@ PUT /categories/:id
 ```
 
 ### Delete Category
+
 ```
 DELETE /categories/:id
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -289,11 +324,13 @@ DELETE /categories/:id
 ```
 
 ### Update Product Count
+
 ```
 PATCH /categories/:id/product-count
 ```
 
 **Request Body:**
+
 ```json
 {
   "count": 30
@@ -301,6 +338,7 @@ PATCH /categories/:id/product-count
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -314,6 +352,7 @@ PATCH /categories/:id/product-count
 ## Error Handling
 
 ### 400 Bad Request
+
 ```json
 {
   "success": false,
@@ -322,6 +361,7 @@ PATCH /categories/:id/product-count
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "success": false,
@@ -330,6 +370,7 @@ PATCH /categories/:id/product-count
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "success": false,
