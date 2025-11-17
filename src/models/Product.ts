@@ -1,6 +1,34 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 /**
+ * Product Variant Interface
+ */
+export interface IProductVariant {
+  _id?: string;
+  name: string; // e.g., "Color", "Size"
+  values: string[]; // e.g., ["Red", "Blue", "Green"]
+}
+
+/**
+ * Product Specification Interface
+ */
+export interface IProductSpec {
+  _id?: string;
+  name: string; // e.g., "Material", "Weight"
+  value: string; // e.g., "Oak Wood", "25kg"
+}
+
+/**
+ * Product Image Interface
+ */
+export interface IProductImage {
+  _id?: string;
+  url: string;
+  alt: string;
+  isPrimary: boolean;
+}
+
+/**
  * Product Document Interface
  */
 export interface IProduct extends Document {
@@ -8,10 +36,14 @@ export interface IProduct extends Document {
   description: string;
   price: number;
   category: string;
-  image: string;
+  images: IProductImage[];
   stock: number;
   sku: string;
   featured: boolean;
+  variants: IProductVariant[];
+  specifications: IProductSpec[];
+  rating: number;
+  reviews: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -48,9 +80,28 @@ const productSchema = new Schema<IProduct>(
       required: [true, "Category is required"],
       index: true,
     },
-    image: {
-      type: String,
-      default: "📦",
+    images: {
+      type: [
+        {
+          url: {
+            type: String,
+            required: [true, "Image URL is required"],
+          },
+          alt: {
+            type: String,
+            default: "",
+          },
+          isPrimary: {
+            type: Boolean,
+            default: false,
+          },
+        },
+      ],
+      default: [],
+      validate: {
+        validator: (v: IProductImage[]) => v.length <= 10,
+        message: "Cannot exceed 10 product images",
+      },
     },
     stock: {
       type: Number,
@@ -75,6 +126,55 @@ const productSchema = new Schema<IProduct>(
       type: Boolean,
       default: false,
       index: true,
+    },
+    variants: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: [true, "Variant name is required"],
+          },
+          values: {
+            type: [String],
+            required: [true, "Variant values are required"],
+            validate: {
+              validator: (v: string[]) => v.length > 0,
+              message: "At least one variant value is required",
+            },
+          },
+        },
+      ],
+      default: [],
+    },
+    specifications: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: [true, "Specification name is required"],
+          },
+          value: {
+            type: String,
+            required: [true, "Specification value is required"],
+          },
+        },
+      ],
+      default: [],
+    },
+    rating: {
+      type: Number,
+      default: 0,
+      min: [0, "Rating cannot be negative"],
+      max: [5, "Rating cannot exceed 5"],
+    },
+    reviews: {
+      type: Number,
+      default: 0,
+      min: [0, "Review count cannot be negative"],
+      validate: {
+        validator: Number.isInteger,
+        message: "Review count must be an integer",
+      },
     },
   },
   {

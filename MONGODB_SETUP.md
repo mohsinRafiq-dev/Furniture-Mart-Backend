@@ -12,7 +12,7 @@ The backend uses **MongoDB** as the primary database with **Mongoose** as the OD
 ✅ **Graceful Shutdown** - Proper connection cleanup  
 ✅ **Schema Validation** - Built-in data validation  
 ✅ **Indexing** - Performance optimization for common queries  
-✅ **Event Handlers** - Connection lifecycle monitoring  
+✅ **Event Handlers** - Connection lifecycle monitoring
 
 ---
 
@@ -21,6 +21,7 @@ The backend uses **MongoDB** as the primary database with **Mongoose** as the OD
 ### 1. Install MongoDB
 
 #### Local MongoDB
+
 ```bash
 # Windows (using Chocolatey)
 choco install mongodb-community
@@ -34,11 +35,13 @@ mongod
 ```
 
 #### MongoDB Atlas (Cloud)
+
 1. Go to https://www.mongodb.com/cloud/atlas
 2. Create a free cluster
 3. Get connection string: `mongodb+srv://user:password@cluster.mongodb.net/furniture-mart`
 
 ### 2. Install Mongoose
+
 ```bash
 npm install mongoose
 npm install --save-dev @types/mongoose
@@ -47,6 +50,7 @@ npm install --save-dev @types/mongoose
 ### 3. Configure Environment
 
 Create `.env` file:
+
 ```env
 # Local MongoDB
 DB_URI=mongodb://localhost:27017/furniture-mart
@@ -84,9 +88,9 @@ setupConnectionHandlers();
 
 ```typescript
 interface ConnectionOptions {
-  maxRetries?: number;      // Default: 5
-  retryDelay?: number;      // Default: 5000 (ms)
-  verbose?: boolean;        // Default: isDevelopment
+  maxRetries?: number; // Default: 5
+  retryDelay?: number; // Default: 5000 (ms)
+  verbose?: boolean; // Default: isDevelopment
 }
 ```
 
@@ -147,6 +151,7 @@ mongoose.connection.on("reconnected", () => {
 ```
 
 **Validations**:
+
 - Name: 2-100 characters, required
 - Price: Positive number, required
 - Stock: Non-negative integer
@@ -154,6 +159,7 @@ mongoose.connection.on("reconnected", () => {
 - Featured: Indexed for quick lookups
 
 **Indexes**:
+
 - `sku` (unique)
 - `category` + `featured`
 - `name` + `description` (text search)
@@ -175,12 +181,14 @@ mongoose.connection.on("reconnected", () => {
 ```
 
 **Validations**:
+
 - Name: 2-50 characters, unique, required
 - Icon: Required
 - Color: Must be valid Tailwind gradient (contains "from-" and "to-")
 - Product Count: Non-negative integer
 
 **Indexes**:
+
 - `name`
 
 ---
@@ -199,7 +207,7 @@ const product = await Product.create({
   price: 1299,
   category: "Sofas",
   stock: 10,
-  sku: "SOFA-001"
+  sku: "SOFA-001",
 });
 
 // Read
@@ -215,13 +223,11 @@ await Product.findByIdAndDelete(id);
 // Query with filters
 const products = await Product.find({
   category: "Sofas",
-  featured: true
+  featured: true,
 }).sort({ price: -1 });
 
 // Search
-const results = await Product.find(
-  { $text: { $search: "leather sofa" } }
-);
+const results = await Product.find({ $text: { $search: "leather sofa" } });
 
 // Count
 const count = await Product.countDocuments({ featured: true });
@@ -273,21 +279,25 @@ await disconnectDatabase();
 ## MongoDB Connection String Examples
 
 ### Local MongoDB
+
 ```
 mongodb://localhost:27017/furniture-mart
 ```
 
 ### MongoDB with Authentication
+
 ```
 mongodb://username:password@localhost:27017/furniture-mart
 ```
 
 ### MongoDB Atlas
+
 ```
 mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/furniture-mart?retryWrites=true&w=majority
 ```
 
 ### MongoDB Atlas with Options
+
 ```
 mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/furniture-mart?retryWrites=true&w=majority&maxPoolSize=10&minPoolSize=2
 ```
@@ -339,21 +349,25 @@ mongosh "mongodb://localhost:27017/furniture-mart"
 ## Common Issues
 
 ### Connection Timeout
+
 - Check MongoDB service is running
 - Verify `DB_URI` is correct
 - Check firewall/network settings
 
 ### Authentication Failed
+
 - Verify username and password in connection string
 - Check user has correct permissions in MongoDB
 - For Atlas, ensure IP is whitelisted
 
 ### Connection Refused
+
 - MongoDB service not running
 - Wrong host/port in connection string
 - Check localhost:27017 is accessible
 
 ### Duplicate Key Error
+
 - SKU or Category name already exists
 - Clean up existing data or drop collection
 
