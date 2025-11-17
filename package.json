@@ -10,6 +10,8 @@
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts",
     "seed": "tsx scripts/seed.ts",
+    "seed:admin": "tsx scripts/seedAdmin.ts",
+    "test:login": "tsx scripts/testAdminLogin.ts",
     "seed:clear": "tsx scripts/clear.ts"
   },
   "keywords": [
@@ -21,6 +23,7 @@
   "author": "Ashraf Furnitures",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",

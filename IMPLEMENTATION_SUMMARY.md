@@ -2,12 +2,14 @@
 
 ## ✅ Complete Implementation
 
-JWT middleware has been successfully added to protect all routes under `/api/admin/*`. 
+JWT middleware has been successfully added to protect all routes under `/api/admin/*`.
 
 ### What Was Implemented
 
 #### 1. Admin Routes File (`src/routes/admin.ts`)
+
 **296 lines of code with:**
+
 - Central `adminAuthMiddleware` for all admin routes
 - Product management endpoints (CREATE, UPDATE, DELETE)
 - Category management endpoints (CREATE, UPDATE, DELETE)
@@ -16,23 +18,27 @@ JWT middleware has been successfully added to protect all routes under `/api/adm
 - Statistics and analytics endpoints
 
 **Key Features:**
+
 ```typescript
 // Apply middleware to ALL admin routes
 router.use(adminAuthMiddleware);
 
 // Role-based protection
-router.post("/products", editorOrAdmin, handler);      // Admin + Editor
-router.delete("/admins/:id", adminOnly, handler);    // Admin only
-router.get("/profile", handler);                      // Any authenticated role
+router.post("/products", editorOrAdmin, handler); // Admin + Editor
+router.delete("/admins/:id", adminOnly, handler); // Admin only
+router.get("/profile", handler); // Any authenticated role
 ```
 
 #### 2. Main Router Update (`src/routes/index.ts`)
+
 - Imported admin routes
 - Mounted admin routes: `router.use("/admin", adminRoutes);`
 - Updated API documentation with all admin endpoints
 
 #### 3. Comprehensive Documentation
+
 - **ADMIN_MIDDLEWARE.md** (700+ lines)
+
   - Detailed architecture and flow
   - All endpoint specifications
   - Error response formats
@@ -49,11 +55,13 @@ router.get("/profile", handler);                      // Any authenticated role
 ## Architecture
 
 ### Middleware Stack
+
 ```
 Request → adminAuthMiddleware → Role Check → Handler → Response
 ```
 
 ### JWT Flow
+
 ```
 1. Login: POST /api/auth/login
    ↓
@@ -72,29 +80,30 @@ Request → adminAuthMiddleware → Role Check → Handler → Response
 
 ### ✅ All Require JWT Token
 
-| Endpoint | Method | Role | Purpose |
-|----------|--------|------|---------|
-| `/api/admin/products` | POST | editor+ | Create product |
-| `/api/admin/products/:id` | PUT | editor+ | Update product |
-| `/api/admin/products/:id` | DELETE | editor+ | Delete product |
-| `/api/admin/products/bulk-delete` | POST | admin | Bulk delete |
-| `/api/admin/categories` | POST | editor+ | Create category |
-| `/api/admin/categories/:id` | PUT | editor+ | Update category |
-| `/api/admin/categories/:id` | DELETE | editor+ | Delete category |
-| `/api/admin/profile` | GET | any | Get own profile |
-| `/api/admin/profile` | PUT | any | Update own profile |
-| `/api/admin/profile/activity` | GET | admin | View activity log |
-| `/api/admin/admins` | GET | admin | List admins |
-| `/api/admin/admins` | POST | admin | Create admin |
-| `/api/admin/admins/:id` | PUT | admin | Update admin |
-| `/api/admin/admins/:id` | DELETE | admin | Deactivate admin |
-| `/api/admin/stats/overview` | GET | editor+ | Dashboard stats |
-| `/api/admin/stats/products` | GET | editor+ | Product stats |
-| `/api/admin/stats/orders` | GET | editor+ | Order stats |
+| Endpoint                          | Method | Role    | Purpose            |
+| --------------------------------- | ------ | ------- | ------------------ |
+| `/api/admin/products`             | POST   | editor+ | Create product     |
+| `/api/admin/products/:id`         | PUT    | editor+ | Update product     |
+| `/api/admin/products/:id`         | DELETE | editor+ | Delete product     |
+| `/api/admin/products/bulk-delete` | POST   | admin   | Bulk delete        |
+| `/api/admin/categories`           | POST   | editor+ | Create category    |
+| `/api/admin/categories/:id`       | PUT    | editor+ | Update category    |
+| `/api/admin/categories/:id`       | DELETE | editor+ | Delete category    |
+| `/api/admin/profile`              | GET    | any     | Get own profile    |
+| `/api/admin/profile`              | PUT    | any     | Update own profile |
+| `/api/admin/profile/activity`     | GET    | admin   | View activity log  |
+| `/api/admin/admins`               | GET    | admin   | List admins        |
+| `/api/admin/admins`               | POST   | admin   | Create admin       |
+| `/api/admin/admins/:id`           | PUT    | admin   | Update admin       |
+| `/api/admin/admins/:id`           | DELETE | admin   | Deactivate admin   |
+| `/api/admin/stats/overview`       | GET    | editor+ | Dashboard stats    |
+| `/api/admin/stats/products`       | GET    | editor+ | Product stats      |
+| `/api/admin/stats/orders`         | GET    | editor+ | Order stats        |
 
 ## Error Handling
 
 ### 401 Unauthorized (Missing/Invalid Token)
+
 ```json
 {
   "success": false,
@@ -103,6 +112,7 @@ Request → adminAuthMiddleware → Role Check → Handler → Response
 ```
 
 **When:**
+
 - No Authorization header
 - Malformed Authorization header
 - Invalid token format
@@ -110,6 +120,7 @@ Request → adminAuthMiddleware → Role Check → Handler → Response
 - JWT signature invalid
 
 ### 403 Forbidden (Insufficient Permissions)
+
 ```json
 {
   "success": false,
@@ -118,6 +129,7 @@ Request → adminAuthMiddleware → Role Check → Handler → Response
 ```
 
 **When:**
+
 - User role doesn't have required permissions
 - Viewer trying to access editor endpoints
 - Editor trying to access admin-only endpoints
@@ -125,12 +137,14 @@ Request → adminAuthMiddleware → Role Check → Handler → Response
 ## Testing Examples
 
 ### cURL - Missing Token (401)
+
 ```bash
 curl -X GET http://localhost:5000/api/admin/products
 # Returns 401 Unauthorized
 ```
 
 ### cURL - Valid Token
+
 ```bash
 # 1. Login
 TOKEN=$(curl -s -X POST http://localhost:5000/api/auth/login \
@@ -144,6 +158,7 @@ curl -X GET http://localhost:5000/api/admin/profile \
 ```
 
 ### Postman Setup
+
 1. Create environment variable: `token`
 2. After login, save token with Tests script
 3. Use `{{token}}` in Authorization header
@@ -169,6 +184,7 @@ backend/
 ## Code Flow Example
 
 ### Request to Protected Route
+
 ```typescript
 // 1. Client sends request
 GET /api/admin/profile
@@ -203,21 +219,25 @@ res.json({
 ## Security Features
 
 ✅ **JWT Verification**
+
 - Cryptographic signature verification
 - Expiration time checking
 - Payload integrity validation
 
 ✅ **Role-Based Access Control**
+
 - admin: Full access
 - editor: Product/Category CRUD
 - viewer: Read-only access
 
 ✅ **Account Security**
+
 - 5 failed login attempts → 15 min lock
 - Password hashing with bcryptjs
 - isActive status checking
 
 ✅ **Token Management**
+
 - Access token: 24 hours expiry
 - Refresh token: 7 days expiry
 - HTTP-only cookies (optional)
@@ -232,17 +252,19 @@ res.json({
 ## Key Implementation Details
 
 ### Middleware Applied Globally
+
 ```typescript
 // In admin.ts - applies to ALL routes below it
 router.use(adminAuthMiddleware);
 
 // ALL subsequent routes are protected
-router.get("/profile", handler);        // Protected
-router.post("/products", handler);      // Protected
-router.delete("/admins/:id", handler);  // Protected
+router.get("/profile", handler); // Protected
+router.post("/products", handler); // Protected
+router.delete("/admins/:id", handler); // Protected
 ```
 
 ### Two-Layer Authorization
+
 ```typescript
 // Layer 1: JWT Validation (adminAuthMiddleware)
 // Runs for EVERY /api/admin/* route
@@ -257,22 +279,24 @@ router.delete("/admins/:id", handler);  // Protected
 
 ```typescript
 // React/Axios example
-const token = localStorage.getItem('accessToken');
+const token = localStorage.getItem("accessToken");
 
-axios.get('/api/admin/products', {
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-}).catch(error => {
-  if (error.response.status === 401) {
-    // Redirect to login
-    navigate('/login');
-  }
-  if (error.response.status === 403) {
-    // Show permission error
-    toast.error('Insufficient permissions');
-  }
-});
+axios
+  .get("/api/admin/products", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  .catch((error) => {
+    if (error.response.status === 401) {
+      // Redirect to login
+      navigate("/login");
+    }
+    if (error.response.status === 403) {
+      // Show permission error
+      toast.error("Insufficient permissions");
+    }
+  });
 ```
 
 ## Deployment Checklist
@@ -290,14 +314,17 @@ axios.get('/api/admin/products', {
 ## Next Steps
 
 1. **Replace Placeholder Handlers**
+
    - Connect to database operations
    - Add actual create/update/delete logic
 
 2. **Add Validation**
+
    - Use express-validator
    - Validate request body/params
 
 3. **Add Logging**
+
    - Log all admin actions
    - Track modifications
 
