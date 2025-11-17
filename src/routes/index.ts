@@ -5,6 +5,7 @@ import { ApiResponse } from "../types/index.js";
 import productRoutes from "./products.js";
 import categoryRoutes from "./categories.js";
 import authRoutes from "./auth.js";
+import adminRoutes from "./admin.js";
 
 const router = Router();
 
@@ -53,19 +54,47 @@ router.get(
           products: {
             list: "GET /api/products",
             get: "GET /api/products/:id",
-            create: "POST /api/products (admin only)",
-            update: "PUT /api/products/:id (admin only)",
-            delete: "DELETE /api/products/:id (admin only)",
+            search: "GET /api/products/search/advanced",
           },
           categories: {
             list: "GET /api/categories",
-            create: "POST /api/categories (admin only)",
-            update: "PUT /api/categories/:id (admin only)",
-            delete: "DELETE /api/categories/:id (admin only)",
+            get: "GET /api/categories/:id",
           },
           auth: {
             login: "POST /api/auth/login",
-            register: "POST /api/auth/register",
+            refresh: "POST /api/auth/refresh",
+            logout: "POST /api/auth/logout",
+            profile: "GET /api/auth/me",
+          },
+          admin: {
+            note: "All /api/admin/* routes require JWT authentication",
+            products: {
+              create: "POST /api/admin/products (requires auth)",
+              update: "PUT /api/admin/products/:id (requires auth)",
+              delete: "DELETE /api/admin/products/:id (requires auth)",
+              bulkDelete: "POST /api/admin/products/bulk-delete (admin only)",
+            },
+            categories: {
+              create: "POST /api/admin/categories (requires auth)",
+              update: "PUT /api/admin/categories/:id (requires auth)",
+              delete: "DELETE /api/admin/categories/:id (requires auth)",
+            },
+            profile: {
+              get: "GET /api/admin/profile (requires auth)",
+              update: "PUT /api/admin/profile (requires auth)",
+              activity: "GET /api/admin/profile/activity (admin only)",
+            },
+            admins: {
+              list: "GET /api/admin/admins (admin only)",
+              create: "POST /api/admin/admins (admin only)",
+              update: "PUT /api/admin/admins/:id (admin only)",
+              deactivate: "DELETE /api/admin/admins/:id (admin only)",
+            },
+            stats: {
+              overview: "GET /api/admin/stats/overview (requires auth)",
+              products: "GET /api/admin/stats/products (requires auth)",
+              orders: "GET /api/admin/stats/orders (requires auth)",
+            },
           },
         },
       },
@@ -81,5 +110,11 @@ router.get(
 router.use("/products", productRoutes);
 router.use("/categories", categoryRoutes);
 router.use("/auth", authRoutes);
+
+/**
+ * Mount admin routes (all protected by JWT middleware)
+ * All /api/admin/* routes require authentication
+ */
+router.use("/admin", adminRoutes);
 
 export default router;

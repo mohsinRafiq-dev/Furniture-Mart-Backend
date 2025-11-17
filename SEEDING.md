@@ -25,6 +25,7 @@ npm run seed
 ```
 
 This will:
+
 1. Connect to MongoDB
 2. Clear existing data
 3. Insert 6 categories
@@ -32,6 +33,7 @@ This will:
 5. Display statistics
 
 **Output Example:**
+
 ```
 📡 Connecting to MongoDB at mongodb://localhost:27017/furniture-mart...
 ✅ Connected to MongoDB successfully!
@@ -124,15 +126,18 @@ Edit `seed.json` to customize the seed data:
 ## Troubleshooting
 
 ### MongoDB Connection Failed
+
 - Ensure MongoDB server is running
 - Check `MONGODB_URI` in `.env` file
 - Verify network connectivity
 
 ### File Not Found Errors
+
 - Run scripts from project root directory
 - Check that `seed.json` exists in root
 
 ### Data Not Inserted
+
 - Check MongoDB logs
 - Verify collection permissions
 - Ensure models are correctly defined
