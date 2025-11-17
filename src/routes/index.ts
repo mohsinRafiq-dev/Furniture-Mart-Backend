@@ -2,6 +2,8 @@ import { Router, Request, Response } from "express";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { config } from "../config/index.js";
 import { ApiResponse } from "../types/index.js";
+import productRoutes from "./products.js";
+import categoryRoutes from "./categories.js";
 
 const router = Router();
 
@@ -71,5 +73,11 @@ router.get(
     res.status(200).json(response);
   })
 );
+
+/**
+ * Mount resource routes
+ */
+router.use("/products", productRoutes);
+router.use("/categories", categoryRoutes);
 
 export default router;
