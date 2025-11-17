@@ -1,0 +1,430 @@
+{
+  "categories": [
+    {
+      "name": "Sofas & Couches",
+      "description": "Premium and comfortable sofas for every living space",
+      "icon": "🛋️",
+      "color": "from-rose-500 to-pink-500"
+    },
+    {
+      "name": "Beds & Mattresses",
+      "description": "Comfortable beds and premium mattresses for quality sleep",
+      "icon": "🛏️",
+      "color": "from-blue-500 to-cyan-500"
+    },
+    {
+      "name": "Chairs & Recliners",
+      "description": "Ergonomic and stylish chairs for comfort and design",
+      "icon": "🪑",
+      "color": "from-green-500 to-emerald-500"
+    },
+    {
+      "name": "Tables & Desks",
+      "description": "Functional and modern tables and work desks",
+      "icon": "📦",
+      "color": "from-purple-500 to-violet-500"
+    },
+    {
+      "name": "Storage & Shelving",
+      "description": "Practical storage solutions and shelving units",
+      "icon": "🗄️",
+      "color": "from-amber-500 to-orange-500"
+    },
+    {
+      "name": "Outdoor Furniture",
+      "description": "Durable outdoor and patio furniture",
+      "icon": "🌳",
+      "color": "from-teal-500 to-green-500"
+    }
+  ],
+  "products": [
+    {
+      "name": "Modern Gray Leather Sofa",
+      "description": "Elegant modern sofa with premium gray leather upholstery, perfect for contemporary living rooms",
+      "price": 1299,
+      "category": "Sofas & Couches",
+      "sku": "SOFA-001",
+      "stock": 12,
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800",
+          "alt": "Modern Gray Leather Sofa",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Color",
+          "values": ["Gray", "Black", "Brown"]
+        },
+        {
+          "name": "Size",
+          "values": ["2-Seater", "3-Seater", "4-Seater"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "Premium Leather"
+        },
+        {
+          "name": "Style",
+          "value": "Modern"
+        },
+        {
+          "name": "Dimensions",
+          "value": "L 84 x W 40 x H 36 inches"
+        }
+      ],
+      "rating": 4.8,
+      "reviews": 24
+    },
+    {
+      "name": "Wooden Dining Chair Set",
+      "description": "Set of 4 classic wooden dining chairs with comfortable cushioned seats",
+      "price": 399,
+      "category": "Chairs & Recliners",
+      "sku": "CHAIR-001",
+      "stock": 30,
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=800",
+          "alt": "Wooden Dining Chairs",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Wood Type",
+          "values": ["Oak", "Walnut", "Maple"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "Solid Wood + Fabric Cushion"
+        },
+        {
+          "name": "Quantity",
+          "value": "Set of 4"
+        },
+        {
+          "name": "Weight Capacity",
+          "value": "300 lbs per chair"
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 18
+    },
+    {
+      "name": "Queen Size Platform Bed",
+      "description": "Modern queen-size platform bed with integrated storage drawers",
+      "price": 699,
+      "category": "Beds & Mattresses",
+      "sku": "BED-001",
+      "stock": 8,
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+          "alt": "Queen Size Platform Bed",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Color",
+          "values": ["Natural Wood", "Walnut", "Black"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Size",
+          "value": "Queen (60 x 80 inches)"
+        },
+        {
+          "name": "Storage",
+          "value": "2 Drawers"
+        },
+        {
+          "name": "Weight Capacity",
+          "value": "800 lbs"
+        }
+      ],
+      "rating": 4.7,
+      "reviews": 31
+    },
+    {
+      "name": "Executive Office Desk",
+      "description": "Professional executive desk with spacious work surface and built-in storage",
+      "price": 549,
+      "category": "Tables & Desks",
+      "sku": "DESK-001",
+      "stock": 15,
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=800",
+          "alt": "Executive Office Desk",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Finish",
+          "values": ["Walnut", "Oak", "White"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "Solid Wood + Metal Frame"
+        },
+        {
+          "name": "Dimensions",
+          "value": "W 60 x D 30 x H 30 inches"
+        },
+        {
+          "name": "Storage Capacity",
+          "value": "3 Drawers + 2 Shelves"
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 12
+    },
+    {
+      "name": "Wall-Mounted Shelving Unit",
+      "description": "Modern wall-mounted shelving system with 4 shelves, perfect for displaying books and decor",
+      "price": 199,
+      "category": "Storage & Shelving",
+      "sku": "SHELF-001",
+      "stock": 25,
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1574909521253-9a27197a3bd4?w=800",
+          "alt": "Wall-Mounted Shelving",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Color",
+          "values": ["Black", "White", "Natural"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "MDF Wood + Metal Brackets"
+        },
+        {
+          "name": "Shelves",
+          "value": "4 Shelves"
+        },
+        {
+          "name": "Width",
+          "value": "36 inches"
+        }
+      ],
+      "rating": 4.4,
+      "reviews": 9
+    },
+    {
+      "name": "Reclining Leather Chair",
+      "description": "Luxurious reclining chair with premium leather and power recline feature",
+      "price": 899,
+      "category": "Chairs & Recliners",
+      "sku": "RECLINER-001",
+      "stock": 6,
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=800",
+          "alt": "Reclining Leather Chair",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Color",
+          "values": ["Black", "Brown", "Chocolate"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "Top Grain Leather"
+        },
+        {
+          "name": "Mechanism",
+          "value": "Power Recline"
+        },
+        {
+          "name": "Features",
+          "value": "Heated Seat + Massage Function"
+        }
+      ],
+      "rating": 4.9,
+      "reviews": 42
+    },
+    {
+      "name": "L-Shaped Sectional Sofa",
+      "description": "Spacious L-shaped sectional sofa with reversible chaise for flexible seating",
+      "price": 1599,
+      "category": "Sofas & Couches",
+      "sku": "SOFA-002",
+      "stock": 5,
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800",
+          "alt": "L-Shaped Sectional Sofa",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Color",
+          "values": ["Charcoal", "Beige", "Navy"]
+        },
+        {
+          "name": "Configuration",
+          "values": ["Left Facing", "Right Facing"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "Fabric Blend"
+        },
+        {
+          "name": "Dimensions",
+          "value": "L 120 x D 85 x H 38 inches"
+        },
+        {
+          "name": "Seats",
+          "value": "5-6 Seater"
+        }
+      ],
+      "rating": 4.7,
+      "reviews": 56
+    },
+    {
+      "name": "Memory Foam Queen Mattress",
+      "description": "12-inch memory foam mattress with gel cooling technology for superior comfort",
+      "price": 449,
+      "category": "Beds & Mattresses",
+      "sku": "MATTRESS-001",
+      "stock": 20,
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+          "alt": "Memory Foam Mattress",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Firmness",
+          "values": ["Soft", "Medium", "Firm"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "Memory Foam with Gel Layer"
+        },
+        {
+          "name": "Thickness",
+          "value": "12 inches"
+        },
+        {
+          "name": "Warranty",
+          "value": "10-Year Limited"
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 73
+    },
+    {
+      "name": "Glass Top Dining Table",
+      "description": "Elegant dining table with tempered glass top and chrome base",
+      "price": 449,
+      "category": "Tables & Desks",
+      "sku": "TABLE-001",
+      "stock": 10,
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800",
+          "alt": "Glass Dining Table",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Size",
+          "values": ["Seats 4", "Seats 6", "Seats 8"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Material",
+          "value": "Tempered Glass + Chrome Metal Base"
+        },
+        {
+          "name": "Dimensions",
+          "value": "L 72 x W 42 x H 30 inches"
+        },
+        {
+          "name": "Weight Capacity",
+          "value": "400 lbs"
+        }
+      ],
+      "rating": 4.3,
+      "reviews": 15
+    },
+    {
+      "name": "Outdoor Patio Set",
+      "description": "7-piece outdoor patio furniture set with weather-resistant materials",
+      "price": 799,
+      "category": "Outdoor Furniture",
+      "sku": "PATIO-001",
+      "stock": 8,
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800",
+          "alt": "Outdoor Patio Set",
+          "isPrimary": true
+        }
+      ],
+      "variants": [
+        {
+          "name": "Material",
+          "values": ["Teak Wood", "Aluminum", "Rattan"]
+        }
+      ],
+      "specifications": [
+        {
+          "name": "Pieces",
+          "value": "7-Piece Set (1 Table + 6 Chairs)"
+        },
+        {
+          "name": "Weather Resistant",
+          "value": "UV-Protected & Water-Resistant"
+        },
+        {
+          "name": "Color",
+          "value": "Natural/Beige"
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 28
+    }
+  ]
+}
