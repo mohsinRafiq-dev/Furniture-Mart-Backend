@@ -8,7 +8,7 @@ export const config = {
   PORT: parseInt(process.env.PORT || "5000", 10),
 
   // CORS
-  CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3002",
+  CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3000",
 
   // JWT
   JWT_SECRET: process.env.JWT_SECRET || "your-secret-key",

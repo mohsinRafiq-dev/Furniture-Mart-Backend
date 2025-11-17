@@ -6,8 +6,8 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface ICategory extends Document {
   name: string;
   description: string;
-  icon: string;
   color: string;
+  image: string;
   slug: string;
   productCount: number;
   createdAt: Date;
@@ -33,11 +33,6 @@ const categorySchema = new Schema<ICategory>(
       default: "",
       maxlength: [500, "Description cannot exceed 500 characters"],
     },
-    icon: {
-      type: String,
-      required: [true, "Icon is required"],
-      default: "📦",
-    },
     color: {
       type: String,
       required: [true, "Color is required"],
@@ -46,6 +41,10 @@ const categorySchema = new Schema<ICategory>(
         validator: (v: string) => v.includes("from-") && v.includes("to-"),
         message: "Color must be a valid Tailwind gradient format",
       },
+    },
+    image: {
+      type: String,
+      default: "",
     },
     slug: {
       type: String,

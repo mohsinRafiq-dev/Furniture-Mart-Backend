@@ -1,0 +1,510 @@
+{
+  "categories": [
+    {
+      "name": "Living Room",
+      "slug": "living-room",
+      "description": "Modern and comfortable furniture for your living space",
+      "image": "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "name": "Bedroom",
+      "slug": "bedroom",
+      "description": "Cozy and elegant bedroom furniture for a restful retreat",
+      "image": "https://images.unsplash.com/photo-1515221318879-7d82aea1c97d?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "name": "Dining",
+      "slug": "dining",
+      "description": "Stylish dining furniture for memorable meals",
+      "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "name": "Office",
+      "slug": "office",
+      "description": "Productive and professional office furniture solutions",
+      "image": "https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "name": "Kitchen",
+      "slug": "kitchen",
+      "description": "Functional and beautiful kitchen furniture",
+      "image": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "name": "Storage",
+      "slug": "storage",
+      "description": "Smart storage solutions for organized living",
+      "image": "https://images.unsplash.com/photo-1467439691162-f0e747eac5c7?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "name": "Outdoor",
+      "slug": "outdoor",
+      "description": "Beautiful outdoor furniture for your garden and patio",
+      "image": "https://images.unsplash.com/photo-1597584212624-753a47d5b50d?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "name": "Lighting",
+      "slug": "lighting",
+      "description": "Ambient and task lighting to brighten your spaces",
+      "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80"
+    }
+  ],
+  "products": [
+    {
+      "name": "Modern Leather Sofa",
+      "slug": "modern-leather-sofa",
+      "description": "Premium leather sofa with contemporary design and exceptional comfort",
+      "price": 1299,
+      "category": "Living Room",
+      "stock": 15,
+      "sku": "SOFA-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+          "alt": "Modern Leather Sofa",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.8,
+      "reviews": 124
+    },
+    {
+      "name": "Scandinavian Coffee Table",
+      "slug": "scandinavian-coffee-table",
+      "description": "Minimalist wooden coffee table with clean lines",
+      "price": 299,
+      "category": "Living Room",
+      "stock": 23,
+      "sku": "TABLE-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+          "alt": "Scandinavian Coffee Table",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 87
+    },
+    {
+      "name": "Contemporary Armchair",
+      "slug": "contemporary-armchair",
+      "description": "Comfortable armchair with metal frame and fabric upholstery",
+      "price": 549,
+      "category": "Living Room",
+      "stock": 12,
+      "sku": "CHAIR-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+          "alt": "Contemporary Armchair",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.7,
+      "reviews": 95
+    },
+    {
+      "name": "Luxury Bed Frame",
+      "slug": "luxury-bed-frame",
+      "description": "King-size upholstered bed frame with premium design",
+      "price": 1699,
+      "category": "Bedroom",
+      "stock": 8,
+      "sku": "BED-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1515221318879-7d82aea1c97d?auto=format&fit=crop&w=800&q=80",
+          "alt": "Luxury Bed Frame",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.9,
+      "reviews": 156
+    },
+    {
+      "name": "Wooden Nightstand",
+      "slug": "wooden-nightstand",
+      "description": "Elegant wooden nightstand with ample storage",
+      "price": 199,
+      "category": "Bedroom",
+      "stock": 18,
+      "sku": "NIGHT-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1515221318879-7d82aea1c97d?auto=format&fit=crop&w=800&q=80",
+          "alt": "Wooden Nightstand",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 62
+    },
+    {
+      "name": "Bedroom Wardrobe",
+      "slug": "bedroom-wardrobe",
+      "description": "Spacious wardrobe with multiple drawers and hanging space",
+      "price": 899,
+      "category": "Bedroom",
+      "stock": 6,
+      "sku": "WARD-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1515221318879-7d82aea1c97d?auto=format&fit=crop&w=800&q=80",
+          "alt": "Bedroom Wardrobe",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 78
+    },
+    {
+      "name": "Minimalist Dining Table",
+      "slug": "minimalist-dining-table",
+      "description": "Sleek dining table that seats 6-8 people",
+      "price": 749,
+      "category": "Dining",
+      "stock": 11,
+      "sku": "DINE-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+          "alt": "Minimalist Dining Table",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.7,
+      "reviews": 103
+    },
+    {
+      "name": "Dining Chair Set",
+      "slug": "dining-chair-set",
+      "description": "Set of 4 comfortable dining chairs",
+      "price": 449,
+      "category": "Dining",
+      "stock": 16,
+      "sku": "DCHAIR-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+          "alt": "Dining Chair Set",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 71
+    },
+    {
+      "name": "Kitchen Bar Stools",
+      "slug": "kitchen-bar-stools",
+      "description": "Set of 2 adjustable bar stools with metal frame",
+      "price": 299,
+      "category": "Dining",
+      "stock": 19,
+      "sku": "BARSTOOL-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+          "alt": "Kitchen Bar Stools",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.4,
+      "reviews": 54
+    },
+    {
+      "name": "Rustic Wooden Desk",
+      "slug": "rustic-wooden-desk",
+      "description": "Spacious wooden desk perfect for home office",
+      "price": 599,
+      "category": "Office",
+      "stock": 9,
+      "sku": "DESK-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=800&q=80",
+          "alt": "Rustic Wooden Desk",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 89
+    },
+    {
+      "name": "Premium Office Chair",
+      "slug": "premium-office-chair",
+      "description": "Ergonomic office chair with lumbar support",
+      "price": 449,
+      "category": "Office",
+      "stock": 14,
+      "sku": "OFFCHAIR-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=800&q=80",
+          "alt": "Premium Office Chair",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.7,
+      "reviews": 112
+    },
+    {
+      "name": "Office Desk Lamp",
+      "slug": "office-desk-lamp",
+      "description": "Adjustable LED desk lamp with touch control",
+      "price": 129,
+      "category": "Office",
+      "stock": 31,
+      "sku": "LAMP-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=800&q=80",
+          "alt": "Office Desk Lamp",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 68
+    },
+    {
+      "name": "Modern Kitchen Island",
+      "slug": "modern-kitchen-island",
+      "description": "Large kitchen island with storage and breakfast bar",
+      "price": 1099,
+      "category": "Kitchen",
+      "stock": 5,
+      "sku": "ISLAND-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+          "alt": "Modern Kitchen Island",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.8,
+      "reviews": 142
+    },
+    {
+      "name": "Wall-mounted Shelves",
+      "slug": "wall-mounted-shelves",
+      "description": "Set of 3 floating wall-mounted shelves",
+      "price": 189,
+      "category": "Kitchen",
+      "stock": 26,
+      "sku": "SHELF-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+          "alt": "Wall-mounted Shelves",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.4,
+      "reviews": 46
+    },
+    {
+      "name": "Kitchen Pantry Cabinet",
+      "slug": "kitchen-pantry-cabinet",
+      "description": "Tall pantry cabinet with shelves and doors",
+      "price": 449,
+      "category": "Kitchen",
+      "stock": 10,
+      "sku": "PANTRY-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+          "alt": "Kitchen Pantry Cabinet",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 59
+    },
+    {
+      "name": "Industrial Bookshelf",
+      "slug": "industrial-bookshelf",
+      "description": "5-tier industrial bookshelf with metal frame",
+      "price": 379,
+      "category": "Storage",
+      "stock": 13,
+      "sku": "SHELF-002",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1467439691162-f0e747eac5c7?auto=format&fit=crop&w=800&q=80",
+          "alt": "Industrial Bookshelf",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 81
+    },
+    {
+      "name": "Storage Chest",
+      "slug": "storage-chest",
+      "description": "Wooden storage chest with decorative design",
+      "price": 299,
+      "category": "Storage",
+      "stock": 17,
+      "sku": "CHEST-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1467439691162-f0e747eac5c7?auto=format&fit=crop&w=800&q=80",
+          "alt": "Storage Chest",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 63
+    },
+    {
+      "name": "Corner Cabinet",
+      "slug": "corner-cabinet",
+      "description": "Space-saving corner cabinet for maximum storage",
+      "price": 249,
+      "category": "Storage",
+      "stock": 21,
+      "sku": "CORNER-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1467439691162-f0e747eac5c7?auto=format&fit=crop&w=800&q=80",
+          "alt": "Corner Cabinet",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.3,
+      "reviews": 42
+    },
+    {
+      "name": "Garden Patio Sofa",
+      "slug": "garden-patio-sofa",
+      "description": "Comfortable 3-seater outdoor patio sofa",
+      "price": 899,
+      "category": "Outdoor",
+      "stock": 7,
+      "sku": "PATIO-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1597584212624-753a47d5b50d?auto=format&fit=crop&w=800&q=80",
+          "alt": "Garden Patio Sofa",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.7,
+      "reviews": 97
+    },
+    {
+      "name": "Outdoor Dining Set",
+      "slug": "outdoor-dining-set",
+      "description": "6-person outdoor dining set with umbrella",
+      "price": 799,
+      "category": "Outdoor",
+      "stock": 9,
+      "sku": "OUTDINE-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1597584212624-753a47d5b50d?auto=format&fit=crop&w=800&q=80",
+          "alt": "Outdoor Dining Set",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 85
+    },
+    {
+      "name": "Garden Lounge Chairs",
+      "slug": "garden-lounge-chairs",
+      "description": "Set of 2 adjustable garden lounge chairs",
+      "price": 449,
+      "category": "Outdoor",
+      "stock": 15,
+      "sku": "LOUNGE-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1597584212624-753a47d5b50d?auto=format&fit=crop&w=800&q=80",
+          "alt": "Garden Lounge Chairs",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.5,
+      "reviews": 73
+    },
+    {
+      "name": "Pendant Ceiling Light",
+      "slug": "pendant-ceiling-light",
+      "description": "Modern pendant light fixture for dining areas",
+      "price": 159,
+      "category": "Lighting",
+      "stock": 28,
+      "sku": "PEND-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+          "alt": "Pendant Ceiling Light",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.6,
+      "reviews": 76
+    },
+    {
+      "name": "Floor Standing Lamp",
+      "slug": "floor-standing-lamp",
+      "description": "Tall floor lamp with adjustable arm and dimmable light",
+      "price": 199,
+      "category": "Lighting",
+      "stock": 24,
+      "sku": "FLOOR-001",
+      "featured": true,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+          "alt": "Floor Standing Lamp",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.7,
+      "reviews": 91
+    },
+    {
+      "name": "Wall Sconces",
+      "slug": "wall-sconces",
+      "description": "Pair of elegant wall-mounted sconces",
+      "price": 129,
+      "category": "Lighting",
+      "stock": 32,
+      "sku": "SCONCE-001",
+      "featured": false,
+      "images": [
+        {
+          "url": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80",
+          "alt": "Wall Sconces",
+          "isPrimary": true
+        }
+      ],
+      "rating": 4.4,
+      "reviews": 38
+    }
+  ]
+}

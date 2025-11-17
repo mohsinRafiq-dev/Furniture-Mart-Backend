@@ -166,13 +166,13 @@ router.post(
   adminAuthMiddleware,
   adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const { name, description, icon, color } = req.body;
+    const { name, description, color, image } = req.body;
 
     // Validation
-    if (!name || !icon || !color) {
+    if (!name || !color) {
       res.status(400).json({
         success: false,
-        message: "Missing required fields: name, icon, color",
+        message: "Missing required fields: name, color",
       });
       return;
     }
@@ -219,8 +219,8 @@ router.post(
     const newCategory = new Category({
       name,
       description: description || "",
-      icon,
       color,
+      image: image || "",
       productCount: 0,
     });
 
