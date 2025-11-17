@@ -1,96 +1,47 @@
 import { Router, Request, Response } from "express";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { adminAuthMiddleware, adminOnly } from "../middleware/auth.js";
-import { ApiResponse, Category, CreateCategoryRequest } from "../types/index.js";
+import Category from "../models/Category.js";
+import Product from "../models/Product.js";
 
 const router = Router();
 
-// In-memory database (replace with MongoDB later)
-interface CategoryStore {
-  [key: string]: Category;
-}
-
-const categories: CategoryStore = {
-  "cat-1": {
-    id: "cat-1",
-    name: "Sofas & Couches",
-    description: "Modern and classic sofas for every space",
-    icon: "🛋️",
-    color: "from-rose-500 to-pink-500",
-    productCount: 24,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  "cat-2": {
-    id: "cat-2",
-    name: "Beds & Mattresses",
-    description: "Comfortable beds and premium mattresses",
-    icon: "🛏️",
-    color: "from-blue-500 to-cyan-500",
-    productCount: 18,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  "cat-3": {
-    id: "cat-3",
-    name: "Chairs & Recliners",
-    description: "Ergonomic and stylish chairs",
-    icon: "🪑",
-    color: "from-green-500 to-emerald-500",
-    productCount: 32,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  "cat-4": {
-    id: "cat-4",
-    name: "Tables & Desks",
-    description: "Functional tables and work desks",
-    icon: "💼",
-    color: "from-purple-500 to-violet-500",
-    productCount: 15,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  "cat-5": {
-    id: "cat-5",
-    name: "Storage Solutions",
-    description: "Cabinets, shelves, and organization",
-    icon: "🗄️",
-    color: "from-indigo-500 to-blue-500",
-    productCount: 28,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  "cat-6": {
-    id: "cat-6",
-    name: "Lighting",
-    description: "Lamps, chandeliers, and ambient lighting",
-    icon: "💡",
-    color: "from-yellow-500 to-orange-500",
-    productCount: 22,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-};
-
 /**
- * GET /api/categories
- * Get all categories
+ * GET /api/categories/slug/:slug
+ * Get category by slug
  */
 router.get(
-  "/",
+  "/slug/:slug",
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const categoryList = Object.values(categories).sort(
-      (a, b) => b.productCount - a.productCount
-    );
+    const { slug } = req.params;
 
-    const response: ApiResponse<Category[]> = {
-      success: true,
-      message: `Retrieved ${categoryList.length} categories`,
-      data: categoryList,
+    const category = await Category.findOne({
+      slug: slug.toLowerCase(),
+    }).select("-__v");
+
+    if (!category) {
+      res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+      return;
+    }
+
+    // Get product count for this category
+    const productCount = await Product.countDocuments({
+      category: category.name,
+    });
+
+    const response = {
+      ...category.toObject(),
+      productCount,
     };
 
-    res.status(200).json(response);
+    res.status(200).json({
+      success: true,
+      message: "Category retrieved successfully",
+      data: response,
+    });
   })
 );
 
@@ -102,7 +53,8 @@ router.get(
   "/:id",
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const category = categories[id];
+
+    const category = await Category.findById(id).select("-__v");
 
     if (!category) {
       res.status(404).json({
@@ -112,13 +64,96 @@ router.get(
       return;
     }
 
-    const response: ApiResponse<Category> = {
-      success: true,
-      message: "Category retrieved successfully",
-      data: category,
+    // Get product count for this category
+    const productCount = await Product.countDocuments({
+      category: category.name,
+    });
+
+    const response = {
+      ...category.toObject(),
+      productCount,
     };
 
-    res.status(200).json(response);
+    res.status(200).json({
+      success: true,
+      message: "Category retrieved successfully",
+      data: response,
+    });
+  })
+);
+
+/**
+ * GET /api/categories
+ * Get all categories with optional sorting and search
+ */
+router.get(
+  "/",
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { sort, search, page = "1", limit = "20" } = req.query;
+
+    const filter: any = {};
+
+    // Search by name
+    if (search && typeof search === "string") {
+      filter.$or = [
+        { name: new RegExp(search, "i") },
+        { description: new RegExp(search, "i") },
+      ];
+    }
+
+    // Pagination
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const pageSize = Math.min(100, Math.max(1, parseInt(limit as string) || 20));
+    const skip = (pageNum - 1) * pageSize;
+
+    // Sorting
+    let sortObj: any = { createdAt: -1 }; // Default: newest first
+    if (sort) {
+      const sortStr = sort as string;
+      if (sortStr === "name-asc") sortObj = { name: 1 };
+      else if (sortStr === "name-desc") sortObj = { name: -1 };
+      else if (sortStr === "newest") sortObj = { createdAt: -1 };
+      else if (sortStr === "oldest") sortObj = { createdAt: 1 };
+    }
+
+    // Get categories
+    const categories = await Category.find(filter)
+      .sort(sortObj)
+      .skip(skip)
+      .limit(pageSize)
+      .select("-__v");
+
+    // Enrich with product counts
+    const enrichedCategories = await Promise.all(
+      categories.map(async (category) => {
+        const productCount = await Product.countDocuments({
+          category: category.name,
+        });
+        return {
+          ...category.toObject(),
+          productCount,
+        };
+      })
+    );
+
+    const totalCount = await Category.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / pageSize);
+
+    res.status(200).json({
+      success: true,
+      message: `Retrieved ${enrichedCategories.length} categories`,
+      data: {
+        categories: enrichedCategories,
+        pagination: {
+          currentPage: pageNum,
+          pageSize,
+          totalCount,
+          totalPages,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    });
   })
 );
 
@@ -131,8 +166,7 @@ router.post(
   adminAuthMiddleware,
   adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const { name, description, icon, color } =
-      req.body as CreateCategoryRequest;
+    const { name, description, icon, color } = req.body;
 
     // Validation
     if (!name || !icon || !color) {
@@ -151,19 +185,29 @@ router.post(
       return;
     }
 
-    if (description && description.length > 200) {
+    if (description && description.length > 500) {
       res.status(400).json({
         success: false,
-        message: "Description must be less than 200 characters",
+        message: "Description cannot exceed 500 characters",
+      });
+      return;
+    }
+
+    // Validate color format
+    if (!color.includes("from-") || !color.includes("to-")) {
+      res.status(400).json({
+        success: false,
+        message: "Color must be a valid Tailwind gradient format (e.g., 'from-red-500 to-pink-500')",
       });
       return;
     }
 
     // Check for duplicate name
-    const nameExists = Object.values(categories).some(
-      (c) => c.name.toLowerCase() === name.toLowerCase()
-    );
-    if (nameExists) {
+    const existingCategory = await Category.findOne({
+      name: new RegExp(`^${name}$`, "i"),
+    });
+
+    if (existingCategory) {
       res.status(400).json({
         success: false,
         message: "Category with this name already exists",
@@ -171,26 +215,25 @@ router.post(
       return;
     }
 
-    const newCategory: Category = {
-      id: `cat-${Date.now()}`,
+    // Create category
+    const newCategory = new Category({
       name,
       description: description || "",
       icon,
       color,
       productCount: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    });
 
-    categories[newCategory.id] = newCategory;
+    await newCategory.save();
 
-    const response: ApiResponse<Category> = {
+    res.status(201).json({
       success: true,
       message: "Category created successfully",
-      data: newCategory,
-    };
-
-    res.status(201).json(response);
+      data: {
+        ...newCategory.toObject(),
+        productCount: 0,
+      },
+    });
   })
 );
 
@@ -204,7 +247,9 @@ router.put(
   adminOnly,
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const category = categories[id];
+    const { name, description, icon, color } = req.body;
+
+    const category = await Category.findById(id);
 
     if (!category) {
       res.status(404).json({
@@ -213,8 +258,6 @@ router.put(
       });
       return;
     }
-
-    const { name, description, icon, color } = req.body;
 
     // Validate name if provided
     if (name) {
@@ -226,10 +269,12 @@ router.put(
         return;
       }
 
-      // Check for duplicate name
-      const nameExists = Object.values(categories).some(
-        (c) => c.name.toLowerCase() === name.toLowerCase() && c.id !== id
-      );
+      // Check for duplicate name (excluding current category)
+      const nameExists = await Category.findOne({
+        _id: { $ne: id },
+        name: new RegExp(`^${name}$`, "i"),
+      });
+
       if (nameExists) {
         res.status(400).json({
           success: false,
@@ -240,33 +285,49 @@ router.put(
     }
 
     // Validate description if provided
-    if (description && description.length > 200) {
+    if (description !== undefined && description.length > 500) {
       res.status(400).json({
         success: false,
-        message: "Description must be less than 200 characters",
+        message: "Description cannot exceed 500 characters",
       });
       return;
     }
 
+    // Validate color if provided
+    if (color) {
+      if (!color.includes("from-") || !color.includes("to-")) {
+        res.status(400).json({
+          success: false,
+          message: "Color must be a valid Tailwind gradient format",
+        });
+        return;
+      }
+    }
+
     // Update fields
-    const updatedCategory: Category = {
-      ...category,
-      ...(name && { name }),
-      ...(description !== undefined && { description }),
-      ...(icon && { icon }),
-      ...(color && { color }),
-      updatedAt: new Date(),
-    };
+    if (name) {
+      category.name = name;
+      category.slug = undefined as any; // Reset slug to regenerate
+    }
+    if (description !== undefined) category.description = description;
+    if (icon) category.icon = icon;
+    if (color) category.color = color;
 
-    categories[id] = updatedCategory;
+    await category.save();
 
-    const response: ApiResponse<Category> = {
+    // Get product count
+    const productCount = await Product.countDocuments({
+      category: category.name,
+    });
+
+    res.status(200).json({
       success: true,
       message: "Category updated successfully",
-      data: updatedCategory,
-    };
-
-    res.status(200).json(response);
+      data: {
+        ...category.toObject(),
+        productCount,
+      },
+    });
   })
 );
 
@@ -281,36 +342,7 @@ router.delete(
   asyncHandler(async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
-    if (!categories[id]) {
-      res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-      return;
-    }
-
-    delete categories[id];
-
-    const response: ApiResponse = {
-      success: true,
-      message: "Category deleted successfully",
-    };
-
-    res.status(200).json(response);
-  })
-);
-
-/**
- * PATCH /api/categories/:id/product-count
- * Update product count for category
- */
-router.patch(
-  "/:id/product-count",
-  asyncHandler(async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const { count } = req.body;
-
-    const category = categories[id];
+    const category = await Category.findById(id);
 
     if (!category) {
       res.status(404).json({
@@ -320,24 +352,103 @@ router.patch(
       return;
     }
 
-    if (typeof count !== "number" || count < 0) {
+    // Check if category has products
+    const productCount = await Product.countDocuments({
+      category: category.name,
+    });
+
+    if (productCount > 0) {
       res.status(400).json({
         success: false,
-        message: "Count must be a non-negative number",
+        message: `Cannot delete category with ${productCount} product(s). Please reassign or delete products first.`,
       });
       return;
     }
 
-    category.productCount = count;
-    category.updatedAt = new Date();
+    await Category.findByIdAndDelete(id);
 
-    const response: ApiResponse<Category> = {
+    res.status(200).json({
       success: true,
-      message: "Category product count updated",
-      data: category,
-    };
+      message: "Category deleted successfully",
+      data: { id: category._id },
+    });
+  })
+);
 
-    res.status(200).json(response);
+/**
+ * GET /api/categories/stats/overview
+ * Get category statistics
+ */
+router.get(
+  "/stats/overview",
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const totalCategories = await Category.countDocuments();
+
+    // Get categories with product count
+    const categories = await Category.find().select("name");
+
+    const categoryStats = await Promise.all(
+      categories.map(async (category) => {
+        const productCount = await Product.countDocuments({
+          category: category.name,
+        });
+        return {
+          name: category.name,
+          productCount,
+        };
+      })
+    );
+
+    const totalProducts = categoryStats.reduce((sum, cat) => sum + cat.productCount, 0);
+
+    res.status(200).json({
+      success: true,
+      message: "Category statistics retrieved",
+      data: {
+        totalCategories,
+        totalProducts,
+        categories: categoryStats.sort((a, b) => b.productCount - a.productCount),
+      },
+    });
+  })
+);
+
+/**
+ * PATCH /api/categories/:id/product-count
+ * Update product count for category (internal use)
+ */
+router.patch(
+  "/:id/product-count",
+  adminAuthMiddleware,
+  asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+
+    const category = await Category.findById(id);
+
+    if (!category) {
+      res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+      return;
+    }
+
+    // Auto-calculate product count
+    const productCount = await Product.countDocuments({
+      category: category.name,
+    });
+
+    category.productCount = productCount;
+    await category.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Product count updated successfully",
+      data: {
+        ...category.toObject(),
+        productCount,
+      },
+    });
   })
 );
 

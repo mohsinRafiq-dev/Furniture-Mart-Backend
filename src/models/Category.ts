@@ -8,6 +8,7 @@ export interface ICategory extends Document {
   description: string;
   icon: string;
   color: string;
+  slug: string;
   productCount: number;
   createdAt: Date;
   updatedAt: Date;
@@ -46,6 +47,13 @@ const categorySchema = new Schema<ICategory>(
         message: "Color must be a valid Tailwind gradient format",
       },
     },
+    slug: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      index: true,
+    },
     productCount: {
       type: Number,
       default: 0,
@@ -63,6 +71,22 @@ const categorySchema = new Schema<ICategory>(
 
 // Index for common queries
 categorySchema.index({ name: 1 });
+categorySchema.index({ slug: 1 });
+
+/**
+ * Auto-generate slug from name before saving
+ */
+categorySchema.pre("save", function (next) {
+  if (!this.slug && this.name) {
+    this.slug = this.name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+  next();
+});
 
 /**
  * Category Model
