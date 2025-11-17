@@ -5,6 +5,11 @@ import helmet from "helmet";
 import routes from "./routes/index.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import { config } from "./config/index.js";
+import {
+  connectDatabase,
+  setupConnectionHandlers,
+  disconnectDatabase,
+} from "./config/database.js";
 
 // Initialize Express app
 const app: Express = express();
@@ -88,7 +93,7 @@ app.use(errorHandler);
 // ============================================================================
 
 const startServer = (): void => {
-  app.listen(config.PORT, () => {
+  app.listen(config.PORT, async () => {
     console.log("\n");
     console.log("╔════════════════════════════════════════════════════════════╗");
     console.log("║                   Ashraf Furnitures                         ║");
@@ -100,20 +105,39 @@ const startServer = (): void => {
     console.log(`🔗 URL: http://localhost:${config.PORT}`);
     console.log(`🌐 CORS Origin: ${config.CORS_ORIGIN}`);
     console.log("\n");
-    console.log("📚 API Documentation:");
-    console.log(`   Health Check: GET http://localhost:${config.PORT}/api/health`);
-    console.log(`   API Info: GET http://localhost:${config.PORT}/api/info`);
-    console.log("\n");
+
+    // Connect to MongoDB
+    try {
+      await connectDatabase({
+        maxRetries: 5,
+        retryDelay: 5000,
+        verbose: true,
+      });
+
+      // Setup connection event handlers
+      setupConnectionHandlers();
+
+      console.log("📚 API Documentation:");
+      console.log(`   Health Check: GET http://localhost:${config.PORT}/api/health`);
+      console.log(`   API Info: GET http://localhost:${config.PORT}/api/info`);
+      console.log("\n");
+    } catch (error) {
+      console.error("❌ Failed to connect to MongoDB");
+      console.error(error);
+      process.exit(1);
+    }
   });
 
   // Handle graceful shutdown
-  process.on("SIGTERM", () => {
+  process.on("SIGTERM", async () => {
     console.log("SIGTERM received. Shutting down gracefully...");
+    await disconnectDatabase();
     process.exit(0);
   });
 
-  process.on("SIGINT", () => {
+  process.on("SIGINT", async () => {
     console.log("\nSIGINT received. Shutting down gracefully...");
+    await disconnectDatabase();
     process.exit(0);
   });
 };
