@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 async function seedDatabase() {
   try {
     // Connect to MongoDB
-    const mongoUri = process.env.MONGODB_URI || "mongodb://localhost:27017/furniture-mart";
+    const mongoUri = process.env.DB_URI || process.env.MONGODB_URI || "mongodb://localhost:27017/furniture-mart";
     console.log(`📡 Connecting to MongoDB at ${mongoUri}...`);
 
     await mongoose.connect(mongoUri, {

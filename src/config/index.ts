@@ -17,6 +17,13 @@ export const config = {
   // Database
   DB_URI: process.env.DB_URI || "mongodb://localhost:27017/furniture-mart",
 
+  // Google OAuth
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
+
+  // Allowed Admin Emails (comma-separated)
+  ALLOWED_ADMIN_EMAILS: (process.env.ALLOWED_ADMIN_EMAILS || "admin@furniture-mart.com,editor@furniture-mart.com").split(",").map(email => email.trim()),
+
   // Logging
   LOG_LEVEL: process.env.LOG_LEVEL || "combined",
 

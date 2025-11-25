@@ -14,39 +14,35 @@ async function seedAdmin() {
     await mongoose.connect(config.DB_URI);
     console.log("✅ Connected to MongoDB");
 
-    // Check if admin already exists
+    // Check if admins already exist
     const existingAdmin = await AdminUser.findOne({
-      email: "admin@furniture-mart.com",
+      $or: [
+        { email: process.env.ADMIN_GMAIL_EMAIL },
+        { email: process.env.ADMIN_EMAIL },
+      ],
     });
 
     if (existingAdmin) {
-      console.log("⚠️  Admin already exists: admin@furniture-mart.com");
+      console.log("⚠️  Admin accounts already exist");
       console.log("Skipping seed...\n");
       await mongoose.disconnect();
       process.exit(0);
     }
 
-    // Create admin users
+    // Create two admin users with credentials from .env (all secure, not hardcoded)
     const admins = [
       {
-        name: "System Administrator",
-        email: "admin@furniture-mart.com",
-        password: await bcrypt.hash("Admin@123456", 10),
+        name: "System Administrator (Gmail)",
+        email: process.env.ADMIN_GMAIL_EMAIL || "",
+        password: await bcrypt.hash(process.env.ADMIN_GMAIL_PASSWORD || "", 10),
         role: "admin",
         isActive: true,
       },
       {
-        name: "Content Editor",
-        email: "editor@furniture-mart.com",
-        password: await bcrypt.hash("Editor@123456", 10),
-        role: "editor",
-        isActive: true,
-      },
-      {
-        name: "Content Viewer",
-        email: "viewer@furniture-mart.com",
-        password: await bcrypt.hash("Viewer@123456", 10),
-        role: "viewer",
+        name: "System Administrator (Simple Login)",
+        email: process.env.ADMIN_EMAIL || "",
+        password: await bcrypt.hash(process.env.ADMIN_EMAIL_PASSWORD || "", 10),
+        role: "admin",
         isActive: true,
       },
     ];
@@ -56,21 +52,14 @@ async function seedAdmin() {
     for (const adminData of admins) {
       const admin = new AdminUser(adminData);
       await admin.save();
-      console.log(`✅ Created ${adminData.role.toUpperCase()}: ${adminData.email}`);
+      console.log(`✅ Created ADMIN account`);
     }
 
     console.log("\n📊 Admin Users Created Successfully!\n");
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log("Admin Credentials:\n");
-    console.log("1️⃣  ADMIN (Full Access)");
-    console.log("   Email: admin@furniture-mart.com");
-    console.log("   Password: Admin@123456\n");
-    console.log("2️⃣  EDITOR (Content Manager)");
-    console.log("   Email: editor@furniture-mart.com");
-    console.log("   Password: Editor@123456\n");
-    console.log("3️⃣  VIEWER (Read-Only)");
-    console.log("   Email: viewer@furniture-mart.com");
-    console.log("   Password: Viewer@123456\n");
+    console.log("\n✅ Admin accounts have been seeded from .env configuration");
+    console.log("📧 Check your .env file for login credentials");
+    console.log("🔐 Credentials are NOT shown here for security reasons");
     console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
     // Disconnect
