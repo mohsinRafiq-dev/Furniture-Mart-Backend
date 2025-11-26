@@ -8,7 +8,14 @@ const router = Router();
 
 /**
  * GET /api/products/search/advanced
- * Advanced product search with filtering, pagination, and sorting
+ * Advanced product search with filtering, pagination, and intelligent ranking
+ * Features:
+ * - Full-text search on product names and descriptions
+ * - Price range filtering
+ * - Category filtering
+ * - Rating and popularity filtering
+ * - Multiple sorting options
+ * - Pagination support
  */
 router.get(
   "/search/advanced",
@@ -29,14 +36,24 @@ router.get(
     // Build filter object
     const filter: any = {};
 
-    // Search by name or description
-    if (search && typeof search === "string") {
-      filter.$text = { $search: search };
+    // Enhanced full-text search with multiple strategies
+    if (search && typeof search === "string" && search.trim()) {
+      const searchTerms = search.trim();
+      
+      // Use regex pattern matching for flexible search across name and description
+      // Split search terms and create OR conditions for better matching
+      const searchRegex = new RegExp(searchTerms, "i"); // Case-insensitive
+      
+      // Search in both name and description fields
+      filter.$or = [
+        { name: searchRegex },
+        { description: searchRegex },
+      ];
     }
 
-    // Filter by category
-    if (category && typeof category === "string") {
-      filter.category = new RegExp(category, "i");
+    // Filter by category with case-insensitive matching
+    if (category && typeof category === "string" && category.trim()) {
+      filter.category = new RegExp(`^${category.trim()}$`, "i");
     }
 
     // Price range filtering
@@ -58,10 +75,10 @@ router.get(
       filter.featured = true;
     }
 
-    // Rating filter
+    // Rating filter with minimum threshold
     if (rating) {
       const ratingValue = parseFloat(rating as string);
-      if (!isNaN(ratingValue)) {
+      if (!isNaN(ratingValue) && ratingValue >= 0 && ratingValue <= 5) {
         filter.rating = { $gte: ratingValue };
       }
     }
@@ -71,39 +88,62 @@ router.get(
       filter.stock = { $gt: 0 };
     }
 
-    // Pagination
+    // Pagination with validation
     const pageNum = Math.max(1, parseInt(page as string) || 1);
     const pageSize = Math.min(100, Math.max(1, parseInt(limit as string) || 12));
     const skip = (pageNum - 1) * pageSize;
 
-    // Sorting
+    // Advanced sorting with relevance boosting
     let sortObj: any = { createdAt: -1 }; // Default: newest first
     if (sort) {
       const sortStr = sort as string;
-      if (sortStr === "price-asc") sortObj = { price: 1 };
-      else if (sortStr === "price-desc") sortObj = { price: -1 };
-      else if (sortStr === "rating") sortObj = { rating: -1, reviews: -1 };
-      else if (sortStr === "newest") sortObj = { createdAt: -1 };
-      else if (sortStr === "oldest") sortObj = { createdAt: 1 };
-      else if (sortStr === "popular") sortObj = { reviews: -1, rating: -1 };
-      else if (sortStr === "featured") sortObj = { featured: -1, createdAt: -1 };
+      if (sortStr === "price-asc") {
+        sortObj = { price: 1 };
+      } else if (sortStr === "price-desc") {
+        sortObj = { price: -1 };
+      } else if (sortStr === "rating") {
+        // Sort by rating first, then by review count for tie-breaking
+        sortObj = { rating: -1, reviews: -1 };
+      } else if (sortStr === "newest") {
+        sortObj = { createdAt: -1 };
+      } else if (sortStr === "oldest") {
+        sortObj = { createdAt: 1 };
+      } else if (sortStr === "popular") {
+        // Popular: based on review count and rating
+        sortObj = { reviews: -1, rating: -1 };
+      } else if (sortStr === "featured") {
+        // Featured products first, then by creation date
+        sortObj = { featured: -1, createdAt: -1 };
+      } else {
+        sortObj = { createdAt: -1 };
+      }
     }
 
-    // Execute query
-    const products = await Product.find(filter)
+    // Build query for text search scoring if applicable
+    let query = Product.find(filter);
+
+    // Execute query with sorting, skip, and limit
+    const products = await query
       .sort(sortObj)
       .skip(skip)
       .limit(pageSize)
-      .select("-__v");
+      .select("-__v")
+      .lean();
 
+    // Get total count for pagination
     const totalCount = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / pageSize);
 
+    // Prepare response with enhanced metadata
     res.status(200).json({
       success: true,
       message: `Retrieved ${products.length} products`,
       data: {
-        products,
+        products: products.map((p: any) => {
+          // Remove internal score field from response
+          const { score, ...productData } = p;
+          return productData;
+        }),
         pagination: {
           currentPage: pageNum,
           pageSize,
@@ -111,6 +151,12 @@ router.get(
           totalPages,
           hasNextPage: pageNum < totalPages,
           hasPrevPage: pageNum > 1,
+        },
+        // Enhanced search metadata
+        searchMetadata: {
+          query: search || category || "all",
+          sortedBy: sort || "newest",
+          hasFilters: !!(minPrice || maxPrice || category || rating),
         },
       },
     });

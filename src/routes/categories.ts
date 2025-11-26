@@ -310,7 +310,6 @@ router.put(
       category.slug = undefined as any; // Reset slug to regenerate
     }
     if (description !== undefined) category.description = description;
-    if (icon) category.icon = icon;
     if (color) category.color = color;
 
     await category.save();

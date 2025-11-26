@@ -250,14 +250,14 @@ router.post(
  * POST /api/auth/logout
  * Logout endpoint (invalidates tokens on client side)
  */
-router.post("/logout", asyncHandler(async (req: Request, res: Response) => {
+router.post("/logout", asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const email = (req as any).email || "unknown";
   await logAuditEvent("logout", email, "success", req, "User logged out");
   
   // Clear refresh token cookie
   res.clearCookie("refreshToken");
 
-  return res.status(200).json({
+  res.status(200).json({
     success: true,
     message: "Logout successful",
   });
