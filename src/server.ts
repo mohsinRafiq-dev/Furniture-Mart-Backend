@@ -24,15 +24,24 @@ app.use(helmet());
 // CORS - Allow requests from frontend
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
+
+      const allowedOrigins = config.ALLOWED_ORIGINS as (string | RegExp)[];
       
-      // Check if origin is in allowed list
-      const allowedOrigins = config.ALLOWED_ORIGINS as string[];
-      if (allowedOrigins.includes(origin)) {
+      // Check if origin matches any allowed origin
+      const isAllowed = allowedOrigins.some(allowed => {
+        if (typeof allowed === 'string') {
+          return origin === allowed;
+        }
+        return (allowed as RegExp).test(origin);
+      });
+
+      if (isAllowed) {
         callback(null, true);
       } else {
+        console.warn(`CORS denied for origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
