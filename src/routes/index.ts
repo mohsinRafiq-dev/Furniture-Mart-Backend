@@ -6,6 +6,7 @@ import productRoutes from "./products.js";
 import categoryRoutes from "./categories.js";
 import authRoutes from "./auth.js";
 import adminRoutes from "./admin.js";
+import analyticsRoutes from "./analytics.js";
 
 const router = Router();
 
@@ -66,6 +67,12 @@ router.get(
             logout: "POST /api/auth/logout",
             profile: "GET /api/auth/me",
           },
+          analytics: {
+            trackSession: "POST /api/analytics/track-session",
+            trackProductView: "POST /api/analytics/track-product-view",
+            summary: "GET /api/analytics/summary",
+            product: "GET /api/analytics/product/:productId",
+          },
           admin: {
             note: "All /api/admin/* routes require JWT authentication",
             products: {
@@ -110,6 +117,7 @@ router.get(
 router.use("/products", productRoutes);
 router.use("/categories", categoryRoutes);
 router.use("/auth", authRoutes);
+router.use("/analytics", analyticsRoutes);
 
 /**
  * Mount admin routes (all protected by JWT middleware)
