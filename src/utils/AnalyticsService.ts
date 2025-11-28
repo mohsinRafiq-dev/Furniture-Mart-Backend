@@ -2,7 +2,7 @@ import {
   VisitorSession,
   ProductView,
   DailyAnalytics,
-} from "../models/Analytics";
+} from "../models/Analytics.js";
 
 export class AnalyticsService {
   // Track visitor session
