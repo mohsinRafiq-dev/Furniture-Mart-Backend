@@ -17,9 +17,11 @@ const getAllowedOrigins = (): (string | RegExp)[] => {
     ];
   }
   
-  // Production - use from env or default to Vercel URL
-  const prodOrigin = process.env.CORS_ORIGIN || "https://ashraf-furnitures.vercel.app";
-  return [prodOrigin];
+  // Production - explicitly include Vercel frontend
+  return [
+    "https://ashraf-furnitures.vercel.app",
+    process.env.CORS_ORIGIN || "https://ashraf-furnitures.vercel.app",
+  ];
 };
 
 export const config = {
