@@ -4,24 +4,18 @@ dotenv.config();
 
 // Helper function to get allowed CORS origins
 const getAllowedOrigins = (): (string | RegExp)[] => {
-  const nodeEnv = process.env.NODE_ENV || "development";
-  
-  if (nodeEnv === "development") {
-    return [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "http://localhost:5173",
-      "http://127.0.0.1:3000",
-      "http://127.0.0.1:3001",
-      "http://127.0.0.1:5173",
-    ];
-  }
-  
-  // Production - explicitly include Vercel frontend
-  return [
+  // Always include Vercel frontend in production
+  const frontendUrls = [
     "https://ashraf-furnitures.vercel.app",
-    process.env.CORS_ORIGIN || "https://ashraf-furnitures.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "http://127.0.0.1:5173",
   ];
+  
+  return frontendUrls;
 };
 
 export const config = {
