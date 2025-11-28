@@ -12,7 +12,8 @@
     "seed": "tsx scripts/seed.ts",
     "seed:admin": "tsx scripts/seedAdmin.ts",
     "test:login": "tsx scripts/testAdminLogin.ts",
-    "seed:clear": "tsx scripts/clear.ts"
+    "seed:clear": "tsx scripts/clear.ts",
+    "migrate:add-images": "tsx scripts/add-images-to-products.ts"
   },
   "keywords": [
     "furniture",
