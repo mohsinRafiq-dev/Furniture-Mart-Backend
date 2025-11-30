@@ -1,5 +1,6 @@
 import express, { Express } from "express";
 import cors from "cors";
+import compression from "compression";
 import morgan from "morgan";
 import helmet from "helmet";
 import routes from "./routes/index.js";
@@ -20,6 +21,9 @@ const app: Express = express();
 
 // Helmet - Secure HTTP headers
 app.use(helmet());
+
+// Compression - Enable gzip compression for responses
+app.use(compression());
 
 // CORS - Allow requests from frontend
 app.use(
@@ -85,6 +89,28 @@ app.use(
     skip: (req) => config.isDevelopment && req.url === "/api/health",
   })
 );
+
+// ============================================================================
+// CACHING MIDDLEWARE
+// ============================================================================
+
+// Add cache headers for GET requests (5 minutes for products/categories, 1 hour for static)
+app.use((req, res, next) => {
+  if (req.method === "GET") {
+    // Cache product and category data for 5 minutes
+    if (req.path.includes("/products") || req.path.includes("/categories")) {
+      res.set("Cache-Control", "public, max-age=300"); // 5 minutes
+    }
+    // Cache other GET requests for 1 hour
+    else {
+      res.set("Cache-Control", "public, max-age=3600"); // 1 hour
+    }
+  } else {
+    // Don't cache POST/PUT/DELETE requests
+    res.set("Cache-Control", "no-cache, no-store, must-revalidate");
+  }
+  next();
+});
 
 // ============================================================================
 // API ROUTES
