@@ -6,9 +6,10 @@ dotenv.config();
 const getAllowedOrigins = (): (string | RegExp)[] => {
   // Always include Vercel frontend in production and all local dev URLs
   const frontendUrls: (string | RegExp)[] = [
-    // Production - Vercel main domain
+    // Production - Vercel domains
     "https://ashraf-furnitures.vercel.app",
     "https://furniture-mart-frontend.vercel.app",
+    "https://furniture-mart-nvsadj9p8-mohsins-projects-656bf46a.vercel.app",
     
     // Vercel Preview Deployments - match any *.vercel.app domain
     /^https:\/\/.*\.vercel\.app$/,
