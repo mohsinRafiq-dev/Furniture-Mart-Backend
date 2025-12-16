@@ -139,6 +139,11 @@ router.get(
     const totalCount = await Category.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / pageSize);
 
+    // Set cache headers for better performance
+    // Categories list can be cached for 10 minutes on client side
+    res.set("Cache-Control", "public, max-age=600"); // 10 minutes
+    res.set("ETag", `"categories-${pageNum}-${pageSize}-${totalCount}"`);
+
     res.status(200).json({
       success: true,
       message: `Retrieved ${enrichedCategories.length} categories`,

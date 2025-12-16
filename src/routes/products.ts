@@ -246,10 +246,16 @@ router.get(
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(pageSize)
-      .select("-__v");
+      .select("name price category images.url images.isPrimary images.alt stock rating reviews slug")
+      .lean();
 
     const totalCount = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / pageSize);
+
+    // Set cache headers for better performance
+    // Products list can be cached for 5 minutes on client side
+    res.set("Cache-Control", "public, max-age=300"); // 5 minutes
+    res.set("ETag", `"products-${pageNum}-${pageSize}-${totalCount}"`);
 
     res.status(200).json({
       success: true,
