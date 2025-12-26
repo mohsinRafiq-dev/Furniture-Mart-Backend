@@ -116,25 +116,37 @@ router.get(
       else if (sortStr === "oldest") sortObj = { createdAt: 1 };
     }
 
-    // Get categories
-    const categories = await Category.find(filter)
-      .sort(sortObj)
-      .skip(skip)
-      .limit(pageSize)
-      .select("-__v");
-
-    // Enrich with product counts
-    const enrichedCategories = await Promise.all(
-      categories.map(async (category) => {
-        const productCount = await Product.countDocuments({
-          category: category.name,
-        });
-        return {
-          ...category.toObject(),
-          productCount,
-        };
-      })
-    );
+    // Optimized query using aggregation pipeline for better performance
+    const categories = await Category.aggregate([
+      { $match: filter },
+      { $sort: sortObj },
+      { $skip: skip },
+      { $limit: pageSize },
+      {
+        $lookup: {
+          from: "products",
+          let: { categoryName: "$name" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$category", "$$categoryName"] } } },
+            { $count: "count" }
+          ],
+          as: "productCountArray"
+        }
+      },
+      {
+        $addFields: {
+          productCount: {
+            $ifNull: [{ $arrayElemAt: ["$productCountArray.count", 0] }, 0]
+          }
+        }
+      },
+      {
+        $project: {
+          __v: 0,
+          productCountArray: 0
+        }
+      }
+    ]);
 
     const totalCount = await Category.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / pageSize);
@@ -146,9 +158,9 @@ router.get(
 
     res.status(200).json({
       success: true,
-      message: `Retrieved ${enrichedCategories.length} categories`,
+      message: `Retrieved ${categories.length} categories`,
       data: {
-        categories: enrichedCategories,
+        categories,
         pagination: {
           currentPage: pageNum,
           pageSize,

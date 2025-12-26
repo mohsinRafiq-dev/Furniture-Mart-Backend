@@ -68,9 +68,11 @@ const categorySchema = new Schema<ICategory>(
   }
 );
 
-// Index for common queries
+// Optimized indexes for common queries
 categorySchema.index({ name: 1 });
 categorySchema.index({ slug: 1 });
+categorySchema.index({ createdAt: -1 }); // For sorting
+categorySchema.index({ name: "text", description: "text" }); // For search
 
 /**
  * Auto-generate slug from name before saving

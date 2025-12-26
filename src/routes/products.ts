@@ -242,12 +242,33 @@ router.get(
     const pageSize = Math.min(100, Math.max(1, parseInt(limit as string) || 12));
     const skip = (pageNum - 1) * pageSize;
 
+    // Optimized single query - fetch only necessary fields
     const products = await Product.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(pageSize)
-      .select("name price category images.url images.isPrimary images.alt stock rating reviews slug")
-      .lean();
+      .select("name price category stock rating reviews slug discount images")
+      .lean()
+      .exec();
+
+    // Process products to include only the primary/first image (in-memory, no DB queries)
+    const optimizedProducts = products.map((product: any) => {
+      // Get primary image or first image
+      const primaryImage = product.images?.find((img: any) => img.isPrimary) || product.images?.[0];
+      
+      return {
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        category: product.category,
+        stock: product.stock,
+        rating: product.rating,
+        reviews: product.reviews,
+        slug: product.slug,
+        discount: product.discount,
+        images: primaryImage ? [primaryImage] : [],
+      };
+    });
 
     const totalCount = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / pageSize);
@@ -259,9 +280,9 @@ router.get(
 
     res.status(200).json({
       success: true,
-      message: `Retrieved ${products.length} products`,
+      message: `Retrieved ${optimizedProducts.length} products`,
       data: {
-        products,
+        products: optimizedProducts,
         pagination: {
           currentPage: pageNum,
           pageSize,

@@ -190,11 +190,16 @@ const productSchema = new Schema<IProduct>(
   }
 );
 
-// Index for common queries
+// Optimized indexes for common queries
 productSchema.index({ category: 1, featured: 1 });
+productSchema.index({ category: 1, createdAt: -1 }); // For category + sorting
+productSchema.index({ featured: 1, createdAt: -1 }); // For featured products
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ slug: 1 });
 productSchema.index({ price: 1 });
+productSchema.index({ stock: 1 }); // For stock filtering
+productSchema.index({ rating: -1, reviews: -1 }); // For popular/rating sorting
+productSchema.index({ createdAt: -1 }); // For default sorting
 
 /**
  * Auto-generate slug from name before saving
