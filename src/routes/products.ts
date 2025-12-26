@@ -3,6 +3,7 @@ import { asyncHandler } from "../middleware/errorHandler.js";
 import { adminAuthMiddleware, adminOnly } from "../middleware/auth.js";
 import Product from "../models/Product.js";
 import { query } from "express-validator";
+import { optimizeProductListImage, optimizeProductDetailImage } from "../utils/imageOptimizer.js";
 
 const router = Router();
 
@@ -184,10 +185,19 @@ router.get(
       return;
     }
 
+    // Optimize all product images for detail view (800x800, best quality)
+    const productData = product.toObject();
+    if (productData.images && productData.images.length > 0) {
+      productData.images = productData.images.map((img: any) => ({
+        ...img,
+        url: optimizeProductDetailImage(img.url),
+      }));
+    }
+
     res.status(200).json({
       success: true,
       message: "Product retrieved successfully",
-      data: product,
+      data: productData,
     });
   })
 );
@@ -211,10 +221,19 @@ router.get(
       return;
     }
 
+    // Optimize all product images for detail view (800x800, best quality)
+    const productData = product.toObject();
+    if (productData.images && productData.images.length > 0) {
+      productData.images = productData.images.map((img: any) => ({
+        ...img,
+        url: optimizeProductDetailImage(img.url),
+      }));
+    }
+
     res.status(200).json({
       success: true,
       message: "Product retrieved successfully",
-      data: product,
+      data: productData,
     });
   })
 );
@@ -256,6 +275,12 @@ router.get(
       // Get primary image or first image
       const primaryImage = product.images?.find((img: any) => img.isPrimary) || product.images?.[0];
       
+      // Optimize image URL for product listing (400x400, auto format, good quality)
+      let optimizedImageUrl = primaryImage?.url;
+      if (optimizedImageUrl) {
+        optimizedImageUrl = optimizeProductListImage(optimizedImageUrl);
+      }
+      
       return {
         _id: product._id,
         name: product.name,
@@ -266,7 +291,7 @@ router.get(
         reviews: product.reviews,
         slug: product.slug,
         discount: product.discount,
-        images: primaryImage ? [primaryImage] : [],
+        images: optimizedImageUrl ? [{ ...primaryImage, url: optimizedImageUrl }] : [],
       };
     });
 

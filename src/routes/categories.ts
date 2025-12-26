@@ -3,6 +3,7 @@ import { asyncHandler } from "../middleware/errorHandler.js";
 import { adminAuthMiddleware, adminOnly } from "../middleware/auth.js";
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
+import { optimizeThumbnailImage } from "../utils/imageOptimizer.js";
 
 const router = Router();
 
@@ -151,6 +152,17 @@ router.get(
     const totalCount = await Category.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / pageSize);
 
+    // Optimize category image URLs for thumbnails (150x150)
+    const optimizedCategories = categories.map((category: any) => {
+      if (category.image) {
+        return {
+          ...category,
+          image: optimizeThumbnailImage(category.image),
+        };
+      }
+      return category;
+    });
+
     // Set cache headers for better performance
     // Categories list can be cached for 10 minutes on client side
     res.set("Cache-Control", "public, max-age=600"); // 10 minutes
@@ -160,7 +172,7 @@ router.get(
       success: true,
       message: `Retrieved ${categories.length} categories`,
       data: {
-        categories,
+        categories: optimizedCategories,
         pagination: {
           currentPage: pageNum,
           pageSize,

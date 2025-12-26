@@ -54,6 +54,11 @@ export const config = {
   // Allowed Admin Emails (comma-separated)
   ALLOWED_ADMIN_EMAILS: (process.env.ALLOWED_ADMIN_EMAILS || "admin@furniture-mart.com,editor@furniture-mart.com").split(",").map(email => email.trim()),
 
+  // Cloudinary (Image CDN)
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "",
+
   // Logging
   LOG_LEVEL: process.env.LOG_LEVEL || "combined",
 

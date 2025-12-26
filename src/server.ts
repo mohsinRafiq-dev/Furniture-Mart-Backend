@@ -11,6 +11,7 @@ import {
   setupConnectionHandlers,
   disconnectDatabase,
 } from "./config/database.js";
+import { initCloudinary } from "./utils/imageOptimizer.js";
 
 // Initialize Express app
 const app: Express = express();
@@ -154,6 +155,10 @@ const startServer = (): void => {
     console.log(`📡 Environment: ${config.NODE_ENV.toUpperCase()}`);
     console.log(`🔗 URL: http://localhost:${config.PORT}`);
     console.log(`🌐 CORS Origin: ${config.CORS_ORIGIN}`);
+    console.log("\n");
+
+    // Initialize Cloudinary for image optimization
+    initCloudinary();
     console.log("\n");
 
     // Connect to MongoDB
